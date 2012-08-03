@@ -1,0 +1,38 @@
+From 727c9a36c989dff4df059997908c3183e19f56f1 Mon Sep 17 00:00:00 2001
+From: Anupam Srivastava <ansrivastava@corp.ebay.com>
+Date: Fri, 3 Aug 2012 18:19:02 +0530
+Subject: [PATCH 10/16] Button Width
+
+---
+ fvwm/builtins.c |   15 +++++++++++++++
+ 1 file changed, 15 insertions(+)
+
+diff --git a/fvwm/builtins.c b/fvwm/builtins.c
+index f9d3b3e..4a829b3 100644
+--- a/fvwm/builtins.c
++++ b/fvwm/builtins.c
+@@ -510,6 +510,21 @@ static void do_title_style(F_CMD_ARGS, Bool do_add)
+ 			if (action)
+ 				action += next;
+ 		}
++		else if (!do_add && StrEquals(parm,"buttonwidth"))
++		{
++			int width = 0;
++			int next = 0;
++
++			sscanf(action, "%d%n", &width, &next);
++
++			if (decor->button_width != width)
++			{
++				decor->button_width = width;
++				decor->flags.has_changed = 1;
++			}
++			if (action)
++				action += next;
++		}
+ 		else if (!do_add && StrEquals(parm,"MinHeight"))
+ 		{
+ 			int height = 0;
+-- 
+1.7.9.5
+

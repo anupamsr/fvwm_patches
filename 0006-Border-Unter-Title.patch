@@ -1,0 +1,236 @@
+From 2387c00fb1f334eb2dba2043475cf05bc5b7c140 Mon Sep 17 00:00:00 2001
+From: Anupam Srivastava <ansrivastava@corp.ebay.com>
+Date: Fri, 3 Aug 2012 18:18:02 +0530
+Subject: [PATCH 06/16] Border Unter Title
+
+---
+ fvwm/borders.c      |   28 +++++++++++++++++++++++++++-
+ fvwm/borders.h      |    7 ++++++-
+ fvwm/fvwm.h         |    1 +
+ fvwm/geometry.c     |   29 ++++++++++++++++++++++++-----
+ fvwm/geometry.h     |    2 ++
+ fvwm/style.c        |   11 +++++++++++
+ fvwm/style.h        |    4 ++++
+ fvwm/window_flags.h |    6 ++++++
+ 8 files changed, 81 insertions(+), 7 deletions(-)
+
+diff --git a/fvwm/borders.c b/fvwm/borders.c
+index 3215d83..83c34f9 100644
+--- a/fvwm/borders.c
++++ b/fvwm/borders.c
+@@ -4992,6 +4992,7 @@ void border_get_part_geometry(
+ 	rectangle *ret_g, Window *ret_w)
+ {
+ 	int bw;
++	Bool title;
+ 
+ 	bw = fw->boundary_width;
+ 	/* ret_g->x and ret->y is just an offset relatively to the w,
+@@ -5062,7 +5063,32 @@ void border_get_part_geometry(
+ 		ret_g->height = sidebar_g->y;
+ 		break;
+ 	default:
+-		return;
++		break;
++	}
++
++	if (HAS_BORDER_UNDER_TITLE(fw))
++	{
++		title = False;
++		switch (GET_TITLE_DIR(fw))
++		{
++		case DIR_N: title = part & PART_TOP; break;
++		case DIR_E: title = part & PART_RIGHT; break;
++		case DIR_S: title = part & PART_BOTTOM; break;
++		case DIR_W: title = part & PART_LEFT; break;
++		}
++		if (title)
++		{
++			ret_g->width = max(ret_g->width, 2 * bw + fw->title_thickness);
++			ret_g->height = max(ret_g->height, 2 * bw + fw->title_thickness);
++			if (part & PART_RIGHT)
++			{
++				ret_g->x = 2 * sidebar_g->x + sidebar_g->width - ret_g->width;
++			}
++			if (part & PART_BOTTOM)
++			{
++				ret_g->y = 2 * sidebar_g->y + sidebar_g->height - ret_g->height;
++			}
++		}
+ 	}
+ 
+ 	return;
+diff --git a/fvwm/borders.h b/fvwm/borders.h
+index 8407ea7..9db2e07 100644
+--- a/fvwm/borders.h
++++ b/fvwm/borders.h
+@@ -36,7 +36,12 @@ typedef enum
+ 	PART_FRAME     = 0xff,
+ 	PART_TITLEBAR  = 0x300,
+ 	PART_HANDLES   = 0xc00,
+-	PART_ALL       = 0xfff
++	PART_ALL       = 0xfff,
++
++	PART_TOP       = 0x31,
++	PART_BOTTOM    = 0xc2,
++	PART_LEFT      = 0x58,
++	PART_RIGHT     = 0xa4
+ } window_parts;
+ 
+ typedef enum
+diff --git a/fvwm/fvwm.h b/fvwm/fvwm.h
+index 98b27a1..a709ee7 100644
+--- a/fvwm/fvwm.h
++++ b/fvwm/fvwm.h
+@@ -271,6 +271,7 @@ typedef struct
+ #define WINDOWSHADE_LAZY_MASK   0x3
+ 		unsigned windowshade_laziness : 2;
+ 		unsigned use_title_decor_rotation : 1;
++		unsigned has_border_under_title : 1;
+ 		focus_policy_t focus_policy;
+ 	} s;
+ } common_flags_t;
+diff --git a/fvwm/geometry.c b/fvwm/geometry.c
+index f6eeeeb..fc0eafe 100644
+--- a/fvwm/geometry.c
++++ b/fvwm/geometry.c
+@@ -46,6 +46,9 @@
+ 
+ /* ---------------------------- forward declarations ----------------------- */
+ 
++static void __get_window_borders(
++	const FvwmWindow *fw, size_borders *borders, Bool is_shaded);
++
+ /* ---------------------------- local variables ---------------------------- */
+ 
+ /* ---------------------------- exported variables (globals) --------------- */
+@@ -343,7 +346,8 @@ void get_shaded_geometry(
+ 	int big_height = big_g->height;
+ 	int d;
+ 
+-	get_window_borders(fw, &b);
++	__get_window_borders(fw, &b, 1);
++	
+ 	*small_g = *big_g;
+ 	d = 0;
+ 	switch (SHADED_DIR(fw))
+@@ -469,23 +473,38 @@ void get_shaded_client_window_pos(
+ void get_window_borders(
+ 	const FvwmWindow *fw, size_borders *borders)
+ {
++	__get_window_borders(fw, borders, 0);
++}
++
++static void __get_window_borders(
++	const FvwmWindow *fw, size_borders *borders, Bool is_shaded)
++{
++	int title_thickness;
++	
+ 	borders->top_left.width = fw->boundary_width;
+ 	borders->bottom_right.width = fw->boundary_width;
+ 	borders->top_left.height = fw->boundary_width;
+ 	borders->bottom_right.height = fw->boundary_width;
++
++	title_thickness = fw->title_thickness;
++	if (HAS_TITLE(fw) && HAS_BORDER_UNDER_TITLE(fw) && !is_shaded)
++	{
++		title_thickness += fw->boundary_width;
++	}
++	
+ 	switch (GET_TITLE_DIR(fw))
+ 	{
+ 	case DIR_N:
+-		borders->top_left.height += fw->title_thickness;
++		borders->top_left.height += title_thickness;
+ 		break;
+ 	case DIR_S:
+-		borders->bottom_right.height += fw->title_thickness;
++		borders->bottom_right.height += title_thickness;
+ 		break;
+ 	case DIR_W:
+-		borders->top_left.width += fw->title_thickness;
++		borders->top_left.width += title_thickness;
+ 		break;
+ 	case DIR_E:
+-		borders->bottom_right.width += fw->title_thickness;
++		borders->bottom_right.width += title_thickness;
+ 		break;
+ 	}
+ 	borders->total_size.width =
+diff --git a/fvwm/geometry.h b/fvwm/geometry.h
+index a20899b..ee5ea2a 100644
+--- a/fvwm/geometry.h
++++ b/fvwm/geometry.h
+@@ -44,6 +44,8 @@ void get_client_geometry(
+ 	FvwmWindow *fw, rectangle *ret_g);
+ void get_window_borders(
+ 	const FvwmWindow *fw, size_borders *borders);
++void get_window_borders_shaded(
++	const FvwmWindow *fw, size_borders *borders);
+ void get_window_borders_no_title(
+ 	const FvwmWindow *fw, size_borders *borders);
+ void set_window_border_size(
+diff --git a/fvwm/style.c b/fvwm/style.c
+index 37c4685..564be2c 100644
+--- a/fvwm/style.c
++++ b/fvwm/style.c
+@@ -2259,6 +2259,12 @@ static Bool style_parse_one_style_option(
+ 		{
+ 			rest = style_parse_button_style(ps, rest, on);
+ 		}
++		else if (StrEquals(token, "BORDERUNDERTITLE"))
++		{
++			S_SET_HAS_BORDER_UNDER_TITLE(SCF(*ps), on);
++			S_SET_HAS_BORDER_UNDER_TITLE(SCM(*ps), 1);
++			S_SET_HAS_BORDER_UNDER_TITLE(SCC(*ps), 1);
++		}
+ 		else if (StrEquals(token, "BorderWidth"))
+ 		{
+ 			if (GetIntegerArguments(rest, &rest, val, 1))
+@@ -5233,6 +5239,11 @@ void check_window_style_change(
+ 	{
+ 		flags->do_update_rotated_title = 1;
+ 	}
++	
++	if (S_HAS_BORDER_UNDER_TITLE(SCC(*ret_style)))
++	{
++		flags->do_redecorate = True;
++	}
+ 
+ 	/* has_mwm_border
+ 	 * has_mwm_buttons */
+diff --git a/fvwm/style.h b/fvwm/style.h
+index b19b5c4..7c57e17 100644
+--- a/fvwm/style.h
++++ b/fvwm/style.h
+@@ -376,6 +376,10 @@
+ 	((c).s.use_title_decor_rotation)
+ #define S_SET_USE_TITLE_DECOR_ROTATION(c,x) \
+ 	((c).s.use_title_decor_rotation = !!(x))
++#define S_HAS_BORDER_UNDER_TITLE(c) \
++	((c).s.has_border_under_title)
++#define S_SET_HAS_BORDER_UNDER_TITLE(c,x) \
++	((c).s.has_border_under_title = !!(x))
+ #define S_DO_EWMH_MINI_ICON_OVERRIDE(c) \
+ 	((c).s.do_ewmh_mini_icon_override)
+ #define S_SET_DO_EWMH_MINI_ICON_OVERRIDE(c,x) \
+diff --git a/fvwm/window_flags.h b/fvwm/window_flags.h
+index 631972a..9d04901 100644
+--- a/fvwm/window_flags.h
++++ b/fvwm/window_flags.h
+@@ -328,6 +328,12 @@
+ 	(fw)->flags.common.s.use_title_decor_rotation = !!(x)
+ #define SETM_USE_TITLE_DECOR_ROTATION(fw,x) \
+ 	(fw)->flag_mask.common.s.use_title_decor_rotation = !!(x)
++#define HAS_BORDER_UNDER_TITLE(fw) \
++	((fw)->flags.common.s.has_border_under_title)
++#define SET_HAS_BORDER_UNDER_TITLE(fw,x) \
++	(fw)->flags.common.s.has_border_under_title = !!(x)
++#define SETM_HAS_BORDER_UNDER_TITLE(fw,x) \
++	(fw)->flag_mask.common.s.has_border_under_title = !!(x)
+ 
+ /* access to the special flags of a window */
+ #define DO_REUSE_DESTROYED(fw) \
+-- 
+1.7.9.5
+

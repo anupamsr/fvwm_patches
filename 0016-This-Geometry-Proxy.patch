@@ -1,0 +1,39 @@
+From 18dcb2c3af96b7ea4a23448e8c94eada2ecc0894 Mon Sep 17 00:00:00 2001
+From: Anupam Srivastava <ansrivastava@corp.ebay.com>
+Date: Fri, 3 Aug 2012 18:20:37 +0530
+Subject: [PATCH 16/16] This Geometry Proxy
+
+---
+ libs/defaults.h               |    2 +-
+ modules/FvwmProxy/FvwmProxy.c |    2 +-
+ 2 files changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/libs/defaults.h b/libs/defaults.h
+index ad39f8b..18694cf 100644
+--- a/libs/defaults.h
++++ b/libs/defaults.h
+@@ -153,7 +153,7 @@
+ #define BROKEN_MINSIZE_LIMIT 30000
+ 
+ /* geometry window */
+-#define GEOMETRY_WINDOW_BW                 2 /* pixels */
++#define GEOMETRY_WINDOW_BW                 1 /* pixels */
+ #define GEOMETRY_WINDOW_STRING             " +8888 x +8888 "
+ #define GEOMETRY_WINDOW_POS_STRING         " %+-4d %+-4d "
+ #define GEOMETRY_WINDOW_SIZE_STRING        " %4d x %-4d "
+diff --git a/modules/FvwmProxy/FvwmProxy.c b/modules/FvwmProxy/FvwmProxy.c
+index a2cedd7..6cc2f52 100644
+--- a/modules/FvwmProxy/FvwmProxy.c
++++ b/modules/FvwmProxy/FvwmProxy.c
+@@ -1221,7 +1221,7 @@ static void DrawWindow(
+ 	{
+ 		XClearWindow(dpy,proxy->proxy);
+ 	}
+-	RelieveRectangle(dpy,proxy->proxy, 0,0, w - 1,h - 1, hi_gc,sh_gc, 2);
++	RelieveRectangle(dpy,proxy->proxy, 0,0, w - 1,h - 1, hi_gc,sh_gc, 1);
+ 
+ #if 0
+ 	if (proxy->iconname != NULL)
+-- 
+1.7.9.5
+
