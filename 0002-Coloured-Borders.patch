@@ -1,4 +1,4 @@
-From 84897d8f341b963c3fcdafcd4426dcf6a0f651c5 Mon Sep 17 00:00:00 2001
+From 607d3260cc77a049207aec3bda8fbe48aaeae871 Mon Sep 17 00:00:00 2001
 From: Anupam Srivastava <ansrivastava@corp.ebay.com>
 Date: Fri, 3 Aug 2012 18:16:29 +0530
 Subject: [PATCH 02/16] Coloured Borders
@@ -13,7 +13,7 @@ Subject: [PATCH 02/16] Coloured Borders
  6 files changed, 1289 insertions(+), 35 deletions(-)
 
 diff --git a/fvwm/borders.c b/fvwm/borders.c
-index d348e8e..3215d83 100644
+index e88352f..6197a97 100644
 --- a/fvwm/borders.c
 +++ b/fvwm/borders.c
 @@ -124,14 +124,71 @@ typedef struct
@@ -608,7 +608,7 @@ index d348e8e..3215d83 100644
  		}
  	}
  
-@@ -3279,7 +3677,7 @@ static void border_set_button_pixmap(
+@@ -3281,7 +3679,7 @@ static void border_set_button_pixmap(
  		relative_g.x = button_g->x;
  		relative_g.y = button_g->y;
  		border_get_border_background(
@@ -617,7 +617,7 @@ index d348e8e..3215d83 100644
  		bg.pixmap.g.x = 0;
  		bg.pixmap.g.y = 0;
  		/* set the geometry for drawing the Tiled pixmap;
-@@ -3723,7 +4121,7 @@ static void border_set_title_pixmap(
+@@ -3728,7 +4126,7 @@ static void border_set_title_pixmap(
  		relative_g.y = td->layout.title_g.y;
  		border_get_border_background(
  			&bg, td->cd, &td->layout.title_g, &relative_g,
@@ -627,10 +627,10 @@ index d348e8e..3215d83 100644
  		bg.pixmap.g.y = 0;
  		/* set the geometry for drawing the Tiled pixmap;
 diff --git a/fvwm/fvwm.c b/fvwm/fvwm.c
-index 1c73cf7..59cefff 100644
+index e3d5a6b..409bbbf 100644
 --- a/fvwm/fvwm.c
 +++ b/fvwm/fvwm.c
-@@ -1086,7 +1086,22 @@ static void CreateGCs(void)
+@@ -1084,7 +1084,22 @@ static void CreateGCs(void)
  	Scr.ScratchGC2 = fvwmlib_XCreateGC(dpy, Scr.NoFocusWin, gcm, &gcv);
  	Scr.ScratchGC3 = fvwmlib_XCreateGC(dpy, Scr.NoFocusWin, gcm, &gcv);
  	Scr.ScratchGC4 = fvwmlib_XCreateGC(dpy, Scr.NoFocusWin, gcm, &gcv);
@@ -653,12 +653,12 @@ index 1c73cf7..59cefff 100644
 +        Scr.TitleGC = fvwmlib_XCreateGC(dpy, Scr.NoFocusWin, gcm, &gcv);
  	Scr.BordersGC = fvwmlib_XCreateGC(dpy, Scr.NoFocusWin, gcm, &gcv);
  	Scr.TransMaskGC = fvwmlib_XCreateGC(dpy, Scr.NoFocusWin, gcm, &gcv);
- 	Scr.ScratchMonoPixmap = XCreatePixmap(dpy, Scr.Root, 1, 1, 1);
+ 	c.pixel = GetColor(DEFAULT_FORE_COLOR);
 diff --git a/fvwm/fvwm.h b/fvwm/fvwm.h
-index 109df1d..61cc500 100644
+index ddeb8c9..e160543 100644
 --- a/fvwm/fvwm.h
 +++ b/fvwm/fvwm.h
-@@ -577,7 +577,23 @@ typedef struct style_flags
+@@ -575,7 +575,23 @@ typedef struct style_flags
  	unsigned use_colorset : 1;
  	unsigned use_colorset_hi : 1;
  	unsigned use_border_colorset : 1;
@@ -682,7 +682,7 @@ index 109df1d..61cc500 100644
  	unsigned use_icon_title_colorset : 1;
  	unsigned use_icon_title_colorset_hi : 1;
  	unsigned use_icon_background_colorset : 1;
-@@ -668,7 +684,23 @@ typedef struct window_style
+@@ -664,7 +680,23 @@ typedef struct window_style
  	int colorset;
  	int colorset_hi;
  	int border_colorset;
@@ -706,7 +706,7 @@ index 109df1d..61cc500 100644
  	int icon_title_colorset;
  	int icon_title_colorset_hi;
  	int icon_background_colorset;
-@@ -883,12 +915,51 @@ typedef struct FvwmWindow
+@@ -875,12 +907,51 @@ typedef struct FvwmWindow
  	color_quad colors;
  	color_quad hicolors;
  	color_quad border_colors;
@@ -785,10 +785,10 @@ index 40aaf2c..48c23e2 100644
  	GC BordersGC;
  	/* minimum width of size window */
 diff --git a/fvwm/style.c b/fvwm/style.c
-index 70dd0ae..01a137e 100644
+index eebf4f8..3c29424 100644
 --- a/fvwm/style.c
 +++ b/fvwm/style.c
-@@ -675,11 +675,91 @@ static void merge_styles(
+@@ -642,11 +642,91 @@ static void merge_styles(
  		SSET_BORDER_COLORSET(
  			*merged_style, SGET_BORDER_COLORSET(*add_style));
  	}
@@ -880,7 +880,7 @@ index 70dd0ae..01a137e 100644
  	if (add_style->flags.use_icon_title_colorset)
  	{
  		SSET_ICON_TITLE_COLORSET(
-@@ -2223,6 +2303,120 @@ static Bool style_parse_one_style_option(
+@@ -2174,6 +2254,120 @@ static Bool style_parse_one_style_option(
  			ps->flag_mask.use_border_colorset = 1;
  			ps->change_mask.use_border_colorset = 1;
  		}
@@ -1001,7 +1001,7 @@ index 70dd0ae..01a137e 100644
  		else if (StrEquals(token, "BottomTitleRotated"))
  		{
  			S_SET_IS_BOTTOM_TITLE_ROTATED(SCF(*ps), on);
-@@ -2873,7 +3067,117 @@ static Bool style_parse_one_style_option(
+@@ -2802,7 +2996,117 @@ static Bool style_parse_one_style_option(
  			ps->flag_mask.use_border_colorset_hi = 1;
  			ps->change_mask.use_border_colorset_hi = 1;
  		}
@@ -1120,7 +1120,7 @@ index 70dd0ae..01a137e 100644
  		{
  			*val = -1;
  			GetIntegerArguments(rest, &rest, val, 1);
-@@ -5294,6 +5598,62 @@ void update_style_colorset(int colorset)
+@@ -5152,6 +5456,62 @@ void update_style_colorset(int colorset)
  			temp->change_mask.use_border_colorset = 1;
  			Scr.flags.do_need_window_update = 1;
  		}
@@ -1183,7 +1183,7 @@ index 70dd0ae..01a137e 100644
  		if (SUSE_BORDER_COLORSET_HI(&temp->flags) &&
  		    SGET_BORDER_COLORSET_HI(*temp) == colorset)
  		{
-@@ -5301,6 +5661,62 @@ void update_style_colorset(int colorset)
+@@ -5159,6 +5519,62 @@ void update_style_colorset(int colorset)
  			temp->change_mask.use_border_colorset_hi = 1;
  			Scr.flags.do_need_window_update = 1;
  		}
@@ -1246,7 +1246,7 @@ index 70dd0ae..01a137e 100644
  		if (SUSE_ICON_TITLE_COLORSET(&temp->flags) &&
  		    SGET_ICON_TITLE_COLORSET(*temp) == colorset)
  		{
-@@ -5378,7 +5794,129 @@ void update_window_color_style(FvwmWindow *fw, window_style *pstyle)
+@@ -5236,7 +5652,129 @@ void update_window_color_style(FvwmWindow *fw, window_style *pstyle)
  		fw->border_colors.shadow = fw->colors.shadow;
  		fw->border_colors.back = fw->colors.back;
  	}
@@ -1377,7 +1377,7 @@ index 70dd0ae..01a137e 100644
  
  void update_window_color_hi_style(FvwmWindow *fw, window_style *pstyle)
  {
-@@ -5432,6 +5970,127 @@ void update_window_color_hi_style(FvwmWindow *fw, window_style *pstyle)
+@@ -5290,6 +5828,127 @@ void update_window_color_hi_style(FvwmWindow *fw, window_style *pstyle)
  		fw->border_hicolors.shadow = fw->hicolors.shadow;
  		fw->border_hicolors.back = fw->hicolors.back;
  	}
@@ -1506,10 +1506,10 @@ index 70dd0ae..01a137e 100644
  
  void update_icon_title_cs_style(FvwmWindow *fw, window_style *pstyle)
 diff --git a/fvwm/style.h b/fvwm/style.h
-index 5989d66..91a92a5 100644
+index 0a2bc68..e9a9f06 100644
 --- a/fvwm/style.h
 +++ b/fvwm/style.h
-@@ -72,8 +72,40 @@
+@@ -69,8 +69,40 @@
  	((sf)->use_colorset_hi)
  #define SUSE_BORDER_COLORSET(sf) \
  	((sf)->use_border_colorset)
@@ -1550,7 +1550,7 @@ index 5989d66..91a92a5 100644
  #define SUSE_ICON_TITLE_COLORSET(sf) \
  	((sf)->use_icon_title_colorset)
  #define SUSE_ICON_TITLE_COLORSET_HI(sf) \
-@@ -464,6 +496,38 @@
+@@ -461,6 +493,38 @@
  	((s).border_colorset = (x))
  #define SGET_BORDER_COLORSET(s) \
  	((s).border_colorset)
@@ -1589,7 +1589,7 @@ index 5989d66..91a92a5 100644
  #define SGET_COLORSET_HI(s) \
  	((s).colorset_hi)
  #define SSET_COLORSET_HI(s,x) \
-@@ -472,8 +536,40 @@
+@@ -469,8 +533,40 @@
  	((s).border_colorset_hi)
  #define SSET_BORDER_COLORSET_HI(s,x) \
  	((s).border_colorset_hi = (x))

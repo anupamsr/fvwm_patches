@@ -1,4 +1,4 @@
-From 2387c00fb1f334eb2dba2043475cf05bc5b7c140 Mon Sep 17 00:00:00 2001
+From 91e55a35e6d9d580013f3b52eb23da188fe776f4 Mon Sep 17 00:00:00 2001
 From: Anupam Srivastava <ansrivastava@corp.ebay.com>
 Date: Fri, 3 Aug 2012 18:18:02 +0530
 Subject: [PATCH 06/16] Border Unter Title
@@ -15,10 +15,10 @@ Subject: [PATCH 06/16] Border Unter Title
  8 files changed, 81 insertions(+), 7 deletions(-)
 
 diff --git a/fvwm/borders.c b/fvwm/borders.c
-index 3215d83..83c34f9 100644
+index 6197a97..fbeb689 100644
 --- a/fvwm/borders.c
 +++ b/fvwm/borders.c
-@@ -4992,6 +4992,7 @@ void border_get_part_geometry(
+@@ -4997,6 +4997,7 @@ void border_get_part_geometry(
  	rectangle *ret_g, Window *ret_w)
  {
  	int bw;
@@ -26,7 +26,7 @@ index 3215d83..83c34f9 100644
  
  	bw = fw->boundary_width;
  	/* ret_g->x and ret->y is just an offset relatively to the w,
-@@ -5062,7 +5063,32 @@ void border_get_part_geometry(
+@@ -5067,7 +5068,32 @@ void border_get_part_geometry(
  		ret_g->height = sidebar_g->y;
  		break;
  	default:
@@ -79,10 +79,10 @@ index 8407ea7..9db2e07 100644
  
  typedef enum
 diff --git a/fvwm/fvwm.h b/fvwm/fvwm.h
-index 98b27a1..a709ee7 100644
+index 003ef3c..df9c533 100644
 --- a/fvwm/fvwm.h
 +++ b/fvwm/fvwm.h
-@@ -271,6 +271,7 @@ typedef struct
+@@ -269,6 +269,7 @@ typedef struct
  #define WINDOWSHADE_LAZY_MASK   0x3
  		unsigned windowshade_laziness : 2;
  		unsigned use_title_decor_rotation : 1;
@@ -171,10 +171,10 @@ index a20899b..ee5ea2a 100644
  	const FvwmWindow *fw, size_borders *borders);
  void set_window_border_size(
 diff --git a/fvwm/style.c b/fvwm/style.c
-index 37c4685..564be2c 100644
+index 4689f17..47aeafa 100644
 --- a/fvwm/style.c
 +++ b/fvwm/style.c
-@@ -2259,6 +2259,12 @@ static Bool style_parse_one_style_option(
+@@ -2210,6 +2210,12 @@ static Bool style_parse_one_style_option(
  		{
  			rest = style_parse_button_style(ps, rest, on);
  		}
@@ -187,7 +187,7 @@ index 37c4685..564be2c 100644
  		else if (StrEquals(token, "BorderWidth"))
  		{
  			if (GetIntegerArguments(rest, &rest, val, 1))
-@@ -5233,6 +5239,11 @@ void check_window_style_change(
+@@ -5091,6 +5097,11 @@ void check_window_style_change(
  	{
  		flags->do_update_rotated_title = 1;
  	}
@@ -200,10 +200,10 @@ index 37c4685..564be2c 100644
  	/* has_mwm_border
  	 * has_mwm_buttons */
 diff --git a/fvwm/style.h b/fvwm/style.h
-index b19b5c4..7c57e17 100644
+index 3b39c24..b620197 100644
 --- a/fvwm/style.h
 +++ b/fvwm/style.h
-@@ -376,6 +376,10 @@
+@@ -373,6 +373,10 @@
  	((c).s.use_title_decor_rotation)
  #define S_SET_USE_TITLE_DECOR_ROTATION(c,x) \
  	((c).s.use_title_decor_rotation = !!(x))

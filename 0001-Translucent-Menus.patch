@@ -1,4 +1,4 @@
-From 839e4f628c67b5e7e04bd3bbde1b7503a8b52043 Mon Sep 17 00:00:00 2001
+From 5cee180564ba307eaef3ebe06159cfe2e9b10676 Mon Sep 17 00:00:00 2001
 From: Anupam Srivastava <ansrivastava@corp.ebay.com>
 Date: Fri, 3 Aug 2012 18:15:49 +0530
 Subject: [PATCH 01/16] Translucent Menus
@@ -145,7 +145,7 @@ index d9f33d6..de5e2d6 100644
  
  /* access macros to dynamic menu members */
 diff --git a/fvwm/menus.c b/fvwm/menus.c
-index 4b18974..69963d2 100644
+index 918f366..28af4f2 100644
 --- a/fvwm/menus.c
 +++ b/fvwm/menus.c
 @@ -85,6 +85,19 @@
@@ -210,7 +210,7 @@ index 4b18974..69963d2 100644
  		}
  		else
  		{
-@@ -2719,7 +2745,37 @@ static void paint_menu(
+@@ -2730,7 +2756,37 @@ static void paint_menu(
  	}
  	MR_IS_PAINTED(mr) = 1;
  	/* paint the menu background */
@@ -249,7 +249,7 @@ index 4b18974..69963d2 100644
  	{
  		if (MR_IS_BACKGROUND_SET(mr) == False)
  		{
-@@ -3526,10 +3582,7 @@ static int pop_menu_up(
+@@ -3537,10 +3593,7 @@ static int pop_menu_up(
  					MR_HAS_POPPED_UP_RIGHT(mr) = 0;
  				}
  				MR_XANIMATION(parent_menu) += end_x - prev_x;
@@ -261,7 +261,7 @@ index 4b18974..69963d2 100644
  				{
  					transparent_bg = True;
  					get_menu_repaint_transparent_parameters(
-@@ -3708,10 +3761,21 @@ static int pop_menu_up(
+@@ -3719,10 +3772,21 @@ static int pop_menu_up(
  	 */
  
  	XMoveWindow(dpy, MR_WINDOW(mr), x, y);
@@ -286,7 +286,7 @@ index 4b18974..69963d2 100644
  	XFlush(dpy);
  	MR_MAPPED_COPIES(mr)++;
  	MST_USAGE_COUNT(mr)++;
-@@ -6252,16 +6316,122 @@ void update_transparent_menu_bg(
+@@ -6270,16 +6334,122 @@ void update_transparent_menu_bg(
  	{
  		last = True;
  	}
@@ -415,7 +415,7 @@ index 4b18974..69963d2 100644
  }
  
  
-@@ -6302,10 +6472,7 @@ void repaint_transparent_menu(
+@@ -6320,10 +6490,7 @@ void repaint_transparent_menu(
  	}
  	if (!is_bg_set)
  	{
@@ -427,7 +427,7 @@ index 4b18974..69963d2 100644
  	}
  	/* redraw the background of non active item */
  	for (mi = MR_FIRST_ITEM(mr); mi != NULL; mi = MI_NEXT_ITEM(mi))
-@@ -6929,10 +7096,12 @@ void UpdateMenuColorset(int cset)
+@@ -6947,10 +7114,12 @@ void UpdateMenuColorset(int cset)
  				SetWindowBackground(
  					dpy, MR_WINDOW(mr), MR_WIDTH(mr),
  					MR_HEIGHT(mr),

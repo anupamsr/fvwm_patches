@@ -1,4 +1,4 @@
-From 635b6587ee16e90a4ec24d8d3f65b0d4ebc798c1 Mon Sep 17 00:00:00 2001
+From 8151a7976e6d88837d3a67cd304bf96cb23369cf Mon Sep 17 00:00:00 2001
 From: Anupam Srivastava <ansrivastava@corp.ebay.com>
 Date: Fri, 3 Aug 2012 18:19:26 +0530
 Subject: [PATCH 12/16] Fvwm Buttons Tips
@@ -24,7 +24,7 @@ index 5490e8f..a7e9f82 100644
  
  	if (label != NULL)
 diff --git a/modules/FvwmButtons/FvwmButtons.c b/modules/FvwmButtons/FvwmButtons.c
-index 0dc19d8..087ec73 100644
+index 1938a7c..bcf7c83 100644
 --- a/modules/FvwmButtons/FvwmButtons.c
 +++ b/modules/FvwmButtons/FvwmButtons.c
 @@ -62,6 +62,7 @@
@@ -35,7 +35,7 @@ index 0dc19d8..087ec73 100644
  #include "libs/fsm.h"
  #include "libs/ColorUtils.h"
  #include "libs/Graphics.h"
-@@ -907,6 +908,7 @@ static button_info *handle_new_position(
+@@ -908,6 +909,7 @@ static button_info *handle_new_position(
  			button_info *tmp = ActiveButton;
  			ActiveButton = b;
  			RedrawButton(tmp, DRAW_FORCE, NULL);
@@ -43,7 +43,7 @@ index 0dc19d8..087ec73 100644
  		}
  		if (
  			b->flags.b_ActiveIcon ||
-@@ -1047,6 +1049,9 @@ void Loop(void)
+@@ -1062,6 +1064,9 @@ void Loop(void)
  
  	tmp.name = NULL;
  	tmp.name_list = NULL;
@@ -53,7 +53,7 @@ index 0dc19d8..087ec73 100644
  	while ( !isTerminated )
  	{
  		if (My_FNextEvent(Dpy, &Event))
-@@ -1172,6 +1177,10 @@ void Loop(void)
+@@ -1187,6 +1192,10 @@ void Loop(void)
  	  if (!event.xconfigure.send_event &&
  	      Event.xconfigure.window != MyWindow)
  	    continue;
@@ -64,7 +64,7 @@ index 0dc19d8..087ec73 100644
  	  Event.xconfigure.x = event.xconfigure.x;
  	  Event.xconfigure.y = event.xconfigure.y;
  	  Event.xconfigure.send_event = True;
-@@ -1214,10 +1223,33 @@ void Loop(void)
+@@ -1229,10 +1238,33 @@ void Loop(void)
  	case EnterNotify:
  		b = handle_new_position(
  			b, Event.xcrossing.x, Event.xcrossing.y);
@@ -98,7 +98,7 @@ index 0dc19d8..087ec73 100644
  		break;
  
  	case LeaveNotify:
-@@ -1240,11 +1272,13 @@ void Loop(void)
+@@ -1255,11 +1287,13 @@ void Loop(void)
  				b = ActiveButton;
  				ActiveButton = NULL;
  				RedrawButton(b, DRAW_FORCE, NULL);
@@ -112,7 +112,7 @@ index 0dc19d8..087ec73 100644
  		}
  		break;
  
-@@ -1266,8 +1300,8 @@ void Loop(void)
+@@ -1281,8 +1315,8 @@ void Loop(void)
  	  Window dummy;
  
  	  XTranslateCoordinates(
@@ -123,7 +123,7 @@ index 0dc19d8..087ec73 100644
  	}
  	if (CurrentButton)
  	{
-@@ -1309,7 +1343,10 @@ void Loop(void)
+@@ -1324,7 +1358,10 @@ void Loop(void)
  	  RedrawButton(tmp, DRAW_FORCE, NULL);
  	}
  	else

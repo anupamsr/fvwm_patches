@@ -1,4 +1,4 @@
-From 18dcb2c3af96b7ea4a23448e8c94eada2ecc0894 Mon Sep 17 00:00:00 2001
+From acb8c8c86cc98c73cc5097a941c3f90193c27807 Mon Sep 17 00:00:00 2001
 From: Anupam Srivastava <ansrivastava@corp.ebay.com>
 Date: Fri, 3 Aug 2012 18:20:37 +0530
 Subject: [PATCH 16/16] This Geometry Proxy
@@ -9,7 +9,7 @@ Subject: [PATCH 16/16] This Geometry Proxy
  2 files changed, 2 insertions(+), 2 deletions(-)
 
 diff --git a/libs/defaults.h b/libs/defaults.h
-index ad39f8b..18694cf 100644
+index b1e5bc0..30e428d 100644
 --- a/libs/defaults.h
 +++ b/libs/defaults.h
 @@ -153,7 +153,7 @@
@@ -22,10 +22,10 @@ index ad39f8b..18694cf 100644
  #define GEOMETRY_WINDOW_POS_STRING         " %+-4d %+-4d "
  #define GEOMETRY_WINDOW_SIZE_STRING        " %4d x %-4d "
 diff --git a/modules/FvwmProxy/FvwmProxy.c b/modules/FvwmProxy/FvwmProxy.c
-index a2cedd7..6cc2f52 100644
+index d01ef30..6ad88a6 100644
 --- a/modules/FvwmProxy/FvwmProxy.c
 +++ b/modules/FvwmProxy/FvwmProxy.c
-@@ -1221,7 +1221,7 @@ static void DrawWindow(
+@@ -1224,7 +1224,7 @@ static void DrawWindow(
  	{
  		XClearWindow(dpy,proxy->proxy);
  	}

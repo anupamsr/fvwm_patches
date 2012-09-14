@@ -1,4 +1,4 @@
-From c76db95a07dad2da4bdd62e359f3eed92e6fe80e Mon Sep 17 00:00:00 2001
+From 641f8c92fc8793685375ec1f72d74c3c6a71967c Mon Sep 17 00:00:00 2001
 From: Anupam Srivastava <ansrivastava@corp.ebay.com>
 Date: Fri, 3 Aug 2012 18:17:03 +0530
 Subject: [PATCH 03/16] Coloured Borders
@@ -12,10 +12,10 @@ Subject: [PATCH 03/16] Coloured Borders
  5 files changed, 80 insertions(+), 49 deletions(-)
 
 diff --git a/fvwm/fvwm.h b/fvwm/fvwm.h
-index 61cc500..98b27a1 100644
+index e160543..003ef3c 100644
 --- a/fvwm/fvwm.h
 +++ b/fvwm/fvwm.h
-@@ -225,6 +225,7 @@ typedef struct
+@@ -223,6 +223,7 @@ typedef struct
  		unsigned do_not_show_on_map : 1;
  		unsigned do_raise_transient : 1;
  		unsigned do_resize_opaque : 1;
@@ -24,7 +24,7 @@ index 61cc500..98b27a1 100644
  		unsigned do_stack_transient_parent : 1;
  		unsigned do_window_list_skip : 1;
 diff --git a/fvwm/move_resize.c b/fvwm/move_resize.c
-index 22d16d0..36b27c4 100644
+index 2acb493..b85e14a 100644
 --- a/fvwm/move_resize.c
 +++ b/fvwm/move_resize.c
 @@ -108,7 +108,7 @@ static int move_drag_finish_button_mask =
@@ -205,7 +205,7 @@ index 22d16d0..36b27c4 100644
  		}
  	}
  
-@@ -2369,6 +2385,7 @@ Bool __move_loop(
+@@ -2319,6 +2335,7 @@ Bool __move_loop(
  	/* Must not set placed by button if the event is a modified KeyEvent */
  	Bool is_fake_event;
  	FvwmWindow *fw = exc->w.fw;
@@ -213,7 +213,7 @@ index 22d16d0..36b27c4 100644
  	unsigned int draw_parts = PART_NONE;
  	XEvent e;
  
-@@ -2442,7 +2459,7 @@ Bool __move_loop(
+@@ -2392,7 +2409,7 @@ Bool __move_loop(
  	if (!IS_ICONIFIED(fw) &&
  	    ((!do_move_opaque && !Scr.gs.do_emulate_mwm) || !IS_MAPPED(fw)))
  	{
@@ -222,7 +222,7 @@ index 22d16d0..36b27c4 100644
  	}
  
  	if (move_w == FW_W_FRAME(fw) && do_move_opaque)
-@@ -2772,7 +2789,7 @@ Bool __move_loop(
+@@ -2722,7 +2739,7 @@ Bool __move_loop(
  				if (!do_move_opaque)
  				{
  					draw_move_resize_grid(
@@ -231,7 +231,7 @@ index 22d16d0..36b27c4 100644
  				}
  				else
  				{
-@@ -2844,7 +2861,7 @@ Bool __move_loop(
+@@ -2794,7 +2811,7 @@ Bool __move_loop(
  			if (!do_move_opaque)
  			{
  				draw_move_resize_grid(
@@ -240,7 +240,7 @@ index 22d16d0..36b27c4 100644
  			}
  			break;
  
-@@ -3466,7 +3483,7 @@ static void __resize_get_refpos(
+@@ -3276,7 +3293,7 @@ static void __resize_get_refpos(
  static void __resize_step(
  	const exec_context_t *exc, int x_root, int y_root, int *x_off,
  	int *y_off, rectangle *drag, const rectangle *orig, int *xmotionp,
@@ -249,7 +249,7 @@ index 22d16d0..36b27c4 100644
  {
  	int action = 0;
  	int x2;
-@@ -3588,7 +3605,7 @@ static void __resize_step(
+@@ -3398,7 +3415,7 @@ static void __resize_step(
  		{
  			draw_move_resize_grid(
  				drag->x, drag->y, drag->width - 1,
@@ -258,15 +258,15 @@ index 22d16d0..36b27c4 100644
  		}
  		else
  		{
-@@ -3647,6 +3664,7 @@ static Bool __resize_window(F_CMD_ARGS)
+@@ -3455,6 +3472,7 @@ static Bool __resize_window(F_CMD_ARGS)
  	int x_off;
  	int y_off;
  	direction_t dir;
 +	Bool do_outline_thin = DO_RESIZE_OUTLINE_THIN(fw);
- 	int warp_x = 0;
- 	int warp_y = 0;
  
-@@ -3970,7 +3988,7 @@ static Bool __resize_window(F_CMD_ARGS)
+ 	bad_window = False;
+ 	ResizeWindow = FW_W_FRAME(fw);
+@@ -3758,7 +3776,7 @@ static Bool __resize_window(F_CMD_ARGS)
  	if (!do_resize_opaque)
  	{
  		draw_move_resize_grid(
@@ -275,7 +275,7 @@ index 22d16d0..36b27c4 100644
  	}
  	/* kick off resizing without requiring any motion if invoked with a key
  	 * press */
-@@ -3991,7 +4009,7 @@ static Bool __resize_window(F_CMD_ARGS)
+@@ -3779,7 +3797,7 @@ static Bool __resize_window(F_CMD_ARGS)
  		yo = 0;
  		__resize_step(
  			exc, stashed_x, stashed_y, &xo, &yo, drag, orig,
@@ -284,7 +284,7 @@ index 22d16d0..36b27c4 100644
  	}
  	else
  	{
-@@ -4152,7 +4170,7 @@ static Bool __resize_window(F_CMD_ARGS)
+@@ -3943,7 +3961,7 @@ static Bool __resize_window(F_CMD_ARGS)
  				__resize_step(
  					exc, x, y, &x_off, &y_off, drag, orig,
  					&xmotion, &ymotion, do_resize_opaque,
@@ -293,7 +293,7 @@ index 22d16d0..36b27c4 100644
  				/* need to move the viewport */
  				HandlePaging(
  					&ev, dx, dy, &x, &y, &delta_x,
-@@ -4170,7 +4188,7 @@ static Bool __resize_window(F_CMD_ARGS)
+@@ -3961,7 +3979,7 @@ static Bool __resize_window(F_CMD_ARGS)
  				__resize_step(
  					exc, x, y, &x_off, &y_off, drag, orig,
  					&xmotion, &ymotion, do_resize_opaque,
@@ -302,7 +302,7 @@ index 22d16d0..36b27c4 100644
  			}
  			fForceRedraw = False;
  			is_done = True;
-@@ -4205,7 +4223,7 @@ static Bool __resize_window(F_CMD_ARGS)
+@@ -3996,7 +4014,7 @@ static Bool __resize_window(F_CMD_ARGS)
  			{
  				draw_move_resize_grid(
  					drag->x, drag->y, drag->width - 1,
@@ -311,7 +311,7 @@ index 22d16d0..36b27c4 100644
  			}
  		}
  		else
-@@ -4258,7 +4276,7 @@ static Bool __resize_window(F_CMD_ARGS)
+@@ -4049,7 +4067,7 @@ static Bool __resize_window(F_CMD_ARGS)
  			g = sorig;
  			__resize_step(
  				exc, sorig.x, sorig.y, &xo, &yo, &g, orig,
@@ -321,10 +321,10 @@ index 22d16d0..36b27c4 100644
  		if (vx != Scr.Vx || vy != Scr.Vy)
  		{
 diff --git a/fvwm/style.c b/fvwm/style.c
-index 01a137e..37c4685 100644
+index 3c29424..4689f17 100644
 --- a/fvwm/style.c
 +++ b/fvwm/style.c
-@@ -4068,6 +4068,12 @@ static Bool style_parse_one_style_option(
+@@ -3949,6 +3949,12 @@ static Bool style_parse_one_style_option(
  			S_SET_DO_RESIZE_OPAQUE(SCM(*ps), 1);
  			S_SET_DO_RESIZE_OPAQUE(SCC(*ps), 1);
  		}
@@ -338,10 +338,10 @@ index 01a137e..37c4685 100644
  		{
  			S_SET_IS_RIGHT_TITLE_ROTATED_CW(SCF(*ps), on);
 diff --git a/fvwm/style.h b/fvwm/style.h
-index 91a92a5..b19b5c4 100644
+index e9a9f06..3b39c24 100644
 --- a/fvwm/style.h
 +++ b/fvwm/style.h
-@@ -232,6 +232,10 @@
+@@ -229,6 +229,10 @@
  	((c).s.do_resize_opaque)
  #define S_SET_DO_RESIZE_OPAQUE(c,x) \
  	((c).s.do_resize_opaque = !!(x))

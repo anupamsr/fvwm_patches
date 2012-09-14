@@ -1,4 +1,4 @@
-From 4599a3d4c9137d8244661db33b81d5fd6aa2a984 Mon Sep 17 00:00:00 2001
+From 8cda4e1c5d4b71d8c6236658651e5e83381bc85f Mon Sep 17 00:00:00 2001
 From: Anupam Srivastava <ansrivastava@corp.ebay.com>
 Date: Fri, 3 Aug 2012 18:17:23 +0530
 Subject: [PATCH 04/16] Conditionals
@@ -8,7 +8,7 @@ Subject: [PATCH 04/16] Conditionals
  1 file changed, 30 insertions(+)
 
 diff --git a/fvwm/conditional.c b/fvwm/conditional.c
-index a774c38..7aadf62 100644
+index 3b6732c..eb11c87 100644
 --- a/fvwm/conditional.c
 +++ b/fvwm/conditional.c
 @@ -600,6 +600,36 @@ void CreateConditionMask(char *flags, WindowConditionMask *mask)

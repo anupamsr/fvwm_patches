@@ -1,4 +1,4 @@
-From fa0edaa0e01eeefb9d892bb08380c09052418411 Mon Sep 17 00:00:00 2001
+From ab9ddf3db464f88f7435d270a05d76211adaa68e Mon Sep 17 00:00:00 2001
 From: Anupam Srivastava <ansrivastava@corp.ebay.com>
 Date: Fri, 3 Aug 2012 18:18:17 +0530
 Subject: [PATCH 07/16] Inactive Font
@@ -13,10 +13,10 @@ Subject: [PATCH 07/16] Inactive Font
  6 files changed, 110 insertions(+), 16 deletions(-)
 
 diff --git a/fvwm/add_window.c b/fvwm/add_window.c
-index b132110..5e7a246 100644
+index 8b05594..bb6c886 100644
 --- a/fvwm/add_window.c
 +++ b/fvwm/add_window.c
-@@ -753,6 +753,18 @@ static void destroy_window_font(FvwmWindow *fw)
+@@ -625,6 +625,18 @@ static void destroy_window_font(FvwmWindow *fw)
  	fw->title_font = Scr.DefaultFont;
  	SET_USING_DEFAULT_WINDOW_FONT(fw, 1);
  
@@ -35,7 +35,7 @@ index b132110..5e7a246 100644
  	return;
  }
  
-@@ -1801,6 +1813,25 @@ void setup_window_font(
+@@ -1722,6 +1734,25 @@ void setup_window_font(
  		}
  		SET_WINDOW_FONT_LOADED(fw, 1);
  	}
@@ -62,10 +62,10 @@ index b132110..5e7a246 100644
  
  	return;
 diff --git a/fvwm/borders.c b/fvwm/borders.c
-index 83c34f9..9953314 100644
+index fbeb689..6afecd2 100644
 --- a/fvwm/borders.c
 +++ b/fvwm/borders.c
-@@ -3921,7 +3921,7 @@ static void border_draw_title_stick_lines(
+@@ -3923,7 +3923,7 @@ static void border_draw_title_stick_lines(
  
  static void border_draw_title_mono(
  	FvwmWindow *fw, titlebar_descr *td, title_draw_descr *tdd,
@@ -74,7 +74,7 @@ index 83c34f9..9953314 100644
  {
  	int has_vt;
  
-@@ -3931,7 +3931,8 @@ static void border_draw_title_mono(
+@@ -3933,7 +3933,8 @@ static void border_draw_title_mono(
  		td->offset - 2, 0, td->length+4, fw->title_thickness);
  	if (fw->visible_name != (char *)NULL)
  	{
@@ -84,7 +84,7 @@ index 83c34f9..9953314 100644
  	}
  	/* for mono, we clear an area in the title bar where the window
  	 * title goes, so that its more legible. For color, no need */
-@@ -3995,7 +3996,7 @@ static void border_draw_title_relief(
+@@ -3997,7 +3998,7 @@ static void border_draw_title_relief(
  
  static void border_draw_title_deep(
  	FvwmWindow *fw, titlebar_descr *td, title_draw_descr *tdd,
@@ -93,7 +93,7 @@ index 83c34f9..9953314 100644
  {
  	DecorFace *df;
  	pixmap_background_type bg;
-@@ -4017,14 +4018,15 @@ static void border_draw_title_deep(
+@@ -4019,14 +4020,15 @@ static void border_draw_title_deep(
  				1);
  		}
  	}
@@ -109,19 +109,19 @@ index 83c34f9..9953314 100644
 -	Pixmap dest_pix)
 +	Pixmap dest_pix, Bool do_hilight)
  {
- 	memset(tdd, 0, sizeof(*tdd));
- 	/* prepare the gcs and variables */
-@@ -4038,7 +4040,8 @@ static void border_get_titlebar_draw_descr(
+ 	rectangle *title_g;
+ 
+@@ -4042,7 +4044,8 @@ static void border_get_titlebar_draw_descr(
  		tdd->rgc = td->cd->relief_gc;
  		tdd->sgc = td->cd->shadow_gc;
  	}
 -	NewFontAndColor(fw->title_font, td->cd->fore_color, td->cd->back_color);
 +	NewFontAndColor(do_hilight ? fw->title_font : fw->inactive_title_font,
 +		td->cd->fore_color, td->cd->back_color);
+ 	title_g = &td->layout.title_g;
  	tdd->tstyle = &TB_STATE(
  		GetDecor(fw, titlebar))[td->tbstate.tstate].style;
- 	tdd->df = &TB_STATE(GetDecor(fw, titlebar))[td->tbstate.tstate];
-@@ -4075,7 +4078,7 @@ static void border_get_titlebar_draw_descr(
+@@ -4080,7 +4083,7 @@ static void border_get_titlebar_draw_descr(
  }
  
  static void border_set_title_pixmap(
@@ -130,7 +130,7 @@ index 83c34f9..9953314 100644
  {
  	pixmap_background_type bg;
  	title_draw_descr tdd;
-@@ -4083,7 +4086,7 @@ static void border_set_title_pixmap(
+@@ -4088,7 +4091,7 @@ static void border_set_title_pixmap(
  	Bool free_bg_pixmap = False;
  	rectangle pix_g;
  
@@ -139,7 +139,7 @@ index 83c34f9..9953314 100644
  	/* prepare background, either from the window colour or from the
  	 * border style */
  	if (!DFS_USE_BORDER_STYLE(*tdd.tstyle))
-@@ -4151,11 +4154,11 @@ static void border_set_title_pixmap(
+@@ -4156,11 +4159,11 @@ static void border_set_title_pixmap(
  
  	if (Pdepth < 2)
  	{
@@ -153,7 +153,7 @@ index 83c34f9..9953314 100644
  	}
  	border_draw_title_relief(fw, td, &tdd, *dest_pix);
  	border_draw_title_stick_lines(fw, td, &tdd, *dest_pix);
-@@ -4164,7 +4167,7 @@ static void border_set_title_pixmap(
+@@ -4169,7 +4172,7 @@ static void border_set_title_pixmap(
  }
  
  static void border_draw_title(
@@ -162,7 +162,7 @@ index 83c34f9..9953314 100644
  {
  	Pixmap p;
  
-@@ -4182,7 +4185,7 @@ static void border_draw_title(
+@@ -4187,7 +4190,7 @@ static void border_draw_title(
  #if 0
  	fprintf(stderr,"drawing title\n");
  #endif
@@ -171,7 +171,7 @@ index 83c34f9..9953314 100644
  	if (td->draw_rotation != ROTATION_0)
  	{
  		Pixmap tmp;
-@@ -4671,9 +4674,9 @@ static window_parts border_get_titlebar_descr(
+@@ -4676,9 +4679,9 @@ static window_parts border_get_titlebar_descr(
  	if (fw->visible_name != (char *)NULL)
  	{
  		ret_td->length = FlocaleTextWidth(
@@ -184,7 +184,7 @@ index 83c34f9..9953314 100644
  		if (ret_td->length > fw->title_length -
  		    2*MIN_WINDOW_TITLE_TEXT_OFFSET)
  		{
-@@ -4779,7 +4782,7 @@ static void border_draw_titlebar(
+@@ -4784,7 +4787,7 @@ static void border_draw_titlebar(
  	}
  	if ((draw_parts & PART_TITLE) != PART_NONE)
  	{
@@ -194,10 +194,10 @@ index 83c34f9..9953314 100644
  	if ((draw_parts & PART_BUTTONS) != PART_NONE)
  	{
 diff --git a/fvwm/fvwm.h b/fvwm/fvwm.h
-index a709ee7..7738772 100644
+index df9c533..110fbd5 100644
 --- a/fvwm/fvwm.h
 +++ b/fvwm/fvwm.h
-@@ -200,6 +200,7 @@ typedef struct
+@@ -198,6 +198,7 @@ typedef struct
  	unsigned has_icon_font : 1;
  	unsigned has_no_border : 1;
  	unsigned has_window_font : 1;
@@ -205,7 +205,7 @@ index a709ee7..7738772 100644
  	unsigned title_dir : 2;
  	unsigned user_states : 32;
  	/* static flags that do not change dynamically after the window has
-@@ -363,11 +364,13 @@ typedef struct
+@@ -361,11 +362,13 @@ typedef struct
  	unsigned is_viewport_moved : 1;
  	unsigned is_window_being_moved_opaque : 1;
  	unsigned is_window_font_loaded : 1;
@@ -219,7 +219,7 @@ index a709ee7..7738772 100644
  #define ICON_HINT_NEVER    0
  #define ICON_HINT_ONCE     1
  #define ICON_HINT_MULTIPLE 2
-@@ -679,6 +682,7 @@ typedef struct window_style
+@@ -675,6 +678,7 @@ typedef struct window_style
  	signed char icon_title_relief;
  	char *icon_font;
  	char *window_font;
@@ -227,7 +227,7 @@ index a709ee7..7738772 100644
  	char *fore_color_name;
  	char *back_color_name;
  	char *fore_color_name_hi;
-@@ -840,6 +844,7 @@ typedef struct FvwmWindow
+@@ -832,6 +836,7 @@ typedef struct FvwmWindow
  
  	/* title font */
  	FlocaleFont *title_font;
@@ -236,10 +236,10 @@ index a709ee7..7738772 100644
  	short title_text_offset;
  	short title_length;
 diff --git a/fvwm/style.c b/fvwm/style.c
-index 564be2c..11f2cdb 100644
+index 47aeafa..b9af61e 100644
 --- a/fvwm/style.c
 +++ b/fvwm/style.c
-@@ -452,6 +452,22 @@ static void merge_styles(
+@@ -419,6 +419,22 @@ static void merge_styles(
  				*merged_style, SGET_WINDOW_FONT(*add_style));
  		}
  	}
@@ -262,7 +262,7 @@ index 564be2c..11f2cdb 100644
  	if (add_style->flags.use_start_on_desk)
  	{
  		SSET_START_DESK(*merged_style, SGET_START_DESK(*add_style));
-@@ -943,6 +959,10 @@ static void free_style_mask(window_style *style, style_flags *mask)
+@@ -894,6 +910,10 @@ static void free_style_mask(window_style *style, style_flags *mask)
  	{
  		SAFEFREE(SGET_WINDOW_FONT(*style));
  	}
@@ -273,7 +273,7 @@ index 564be2c..11f2cdb 100644
  	if (pmask->has_icon)
  	{
  		SAFEFREE(SGET_ICON_NAME(*style));
-@@ -3383,6 +3403,15 @@ static Bool style_parse_one_style_option(
+@@ -3288,6 +3308,15 @@ static Bool style_parse_one_style_option(
  			S_SET_IS_UNICONIFIABLE(SCM(*ps), 1);
  			S_SET_IS_UNICONIFIABLE(SCC(*ps), 1);
  		}
@@ -288,8 +288,8 @@ index 564be2c..11f2cdb 100644
 +		}
  		else if (StrEquals(token, "IndexedWindowName"))
  		{
- 			char *format;
-@@ -5265,6 +5294,12 @@ void check_window_style_change(
+ 			S_SET_USE_INDEXED_WINDOW_NAME(SCF(*ps), on);
+@@ -5123,6 +5152,12 @@ void check_window_style_change(
  		flags->do_update_window_font = 1;
  	}
  
@@ -303,10 +303,10 @@ index 564be2c..11f2cdb 100644
  	if (S_HAS_STIPPLED_TITLE(SCC(*ret_style)) ||
  	    S_HAS_NO_STICKY_STIPPLED_TITLE(SCC(*ret_style)) ||
 diff --git a/fvwm/style.h b/fvwm/style.h
-index 7c57e17..f6019fe 100644
+index b620197..c071994 100644
 --- a/fvwm/style.h
 +++ b/fvwm/style.h
-@@ -300,6 +300,10 @@
+@@ -297,6 +297,10 @@
  	((c).has_window_font)
  #define S_SET_HAS_WINDOW_FONT(c,x) \
  	((c).has_window_font = !!(x))
@@ -317,7 +317,7 @@ index 7c57e17..f6019fe 100644
  #define S_ICON_OVERRIDE(c) \
  	((c).s.icon_override)
  #define S_SET_ICON_OVERRIDE(c,x) \
-@@ -496,6 +500,10 @@
+@@ -493,6 +497,10 @@
  	((s).window_font)
  #define SSET_WINDOW_FONT(s,x) \
  	((s).window_font = (x))

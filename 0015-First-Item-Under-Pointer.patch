@@ -1,4 +1,4 @@
-From 57c571112b0fcf96a4f36dad50385ef58e73098d Mon Sep 17 00:00:00 2001
+From e38676e11a8e14d230beaf4d789fdb729b7a053e Mon Sep 17 00:00:00 2001
 From: Anupam Srivastava <ansrivastava@corp.ebay.com>
 Date: Fri, 3 Aug 2012 18:20:02 +0530
 Subject: [PATCH 15/16] First Item Under Pointer
@@ -8,10 +8,10 @@ Subject: [PATCH 15/16] First Item Under Pointer
  1 file changed, 7 insertions(+)
 
 diff --git a/fvwm/menus.c b/fvwm/menus.c
-index 19ab220..df1f3d4 100644
+index d465696..3fea311 100644
 --- a/fvwm/menus.c
 +++ b/fvwm/menus.c
-@@ -3349,6 +3349,13 @@ static int pop_menu_up(
+@@ -3360,6 +3360,13 @@ static int pop_menu_up(
  	}
  	context = (*pexc)->w.wcontext;
  
