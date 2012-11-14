@@ -1,7 +1,7 @@
-From 5cee180564ba307eaef3ebe06159cfe2e9b10676 Mon Sep 17 00:00:00 2001
+From 15463d969c9ab70c2aea7589fdc4c4920fa31c34 Mon Sep 17 00:00:00 2001
 From: Anupam Srivastava <ansrivastava@corp.ebay.com>
 Date: Fri, 3 Aug 2012 18:15:49 +0530
-Subject: [PATCH 01/16] Translucent Menus
+Subject: [PATCH 01/15] Translucent Menus
 
 ---
  fvwm/colorset.c        |   50 +++++++++++
@@ -145,7 +145,7 @@ index d9f33d6..de5e2d6 100644
  
  /* access macros to dynamic menu members */
 diff --git a/fvwm/menus.c b/fvwm/menus.c
-index 918f366..28af4f2 100644
+index fa3bd9b..b73ed50 100644
 --- a/fvwm/menus.c
 +++ b/fvwm/menus.c
 @@ -85,6 +85,19 @@
@@ -202,7 +202,7 @@ index 918f366..28af4f2 100644
  		}
  		AnimatedMoveOfWindow(
  			MR_WINDOW(mr), act_x, act_y, act_x - MR_XANIMATION(mr),
-@@ -1915,6 +1940,7 @@ static void make_menu_window(MenuRoot *mr, Bool is_tear_off)
+@@ -1918,6 +1943,7 @@ static void make_menu_window(MenuRoot *mr, Bool is_tear_off)
  				/* Doh.  Use the standard display instead. */
  				MR_CREATE_DPY(mr) = dpy;
  			}
@@ -210,7 +210,7 @@ index 918f366..28af4f2 100644
  		}
  		else
  		{
-@@ -2730,7 +2756,37 @@ static void paint_menu(
+@@ -2722,7 +2748,37 @@ static void paint_menu(
  	}
  	MR_IS_PAINTED(mr) = 1;
  	/* paint the menu background */
@@ -249,7 +249,7 @@ index 918f366..28af4f2 100644
  	{
  		if (MR_IS_BACKGROUND_SET(mr) == False)
  		{
-@@ -3537,10 +3593,7 @@ static int pop_menu_up(
+@@ -3529,10 +3585,7 @@ static int pop_menu_up(
  					MR_HAS_POPPED_UP_RIGHT(mr) = 0;
  				}
  				MR_XANIMATION(parent_menu) += end_x - prev_x;
@@ -261,7 +261,7 @@ index 918f366..28af4f2 100644
  				{
  					transparent_bg = True;
  					get_menu_repaint_transparent_parameters(
-@@ -3719,10 +3772,21 @@ static int pop_menu_up(
+@@ -3711,10 +3764,21 @@ static int pop_menu_up(
  	 */
  
  	XMoveWindow(dpy, MR_WINDOW(mr), x, y);
@@ -286,7 +286,7 @@ index 918f366..28af4f2 100644
  	XFlush(dpy);
  	MR_MAPPED_COPIES(mr)++;
  	MST_USAGE_COUNT(mr)++;
-@@ -6270,16 +6334,122 @@ void update_transparent_menu_bg(
+@@ -6255,16 +6319,122 @@ void update_transparent_menu_bg(
  	{
  		last = True;
  	}
@@ -415,7 +415,7 @@ index 918f366..28af4f2 100644
  }
  
  
-@@ -6320,10 +6490,7 @@ void repaint_transparent_menu(
+@@ -6305,10 +6475,7 @@ void repaint_transparent_menu(
  	}
  	if (!is_bg_set)
  	{
@@ -427,7 +427,7 @@ index 918f366..28af4f2 100644
  	}
  	/* redraw the background of non active item */
  	for (mi = MR_FIRST_ITEM(mr); mi != NULL; mi = MI_NEXT_ITEM(mi))
-@@ -6947,10 +7114,12 @@ void UpdateMenuColorset(int cset)
+@@ -6932,10 +7099,12 @@ void UpdateMenuColorset(int cset)
  				SetWindowBackground(
  					dpy, MR_WINDOW(mr), MR_WIDTH(mr),
  					MR_HEIGHT(mr),
@@ -521,5 +521,5 @@ index ec75601..5e0001d 100644
  Pixmap PGraphicsCreateDitherPixmap(
  	Display *dpy, Window win, Drawable src, Pixmap mask, int depth, GC gc,
 -- 
-1.7.9.5
+1.7.10.4
 

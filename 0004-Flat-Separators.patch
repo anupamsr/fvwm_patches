@@ -1,7 +1,7 @@
-From 342d7946e05df8c43c638e2d74965c697162530f Mon Sep 17 00:00:00 2001
+From 8ba6b7afc187462511acd5eace406084068c86d2 Mon Sep 17 00:00:00 2001
 From: Anupam Srivastava <ansrivastava@corp.ebay.com>
-Date: Fri, 3 Aug 2012 18:17:47 +0530
-Subject: [PATCH 05/16] Flat Separators
+Date: Wed, 14 Nov 2012 16:16:43 +0530
+Subject: [PATCH 04/15] Flat Separators
 
 ---
  doc/commands/MenuStyle.xml |    7 ++++++-
@@ -12,7 +12,7 @@ Subject: [PATCH 05/16] Flat Separators
  5 files changed, 36 insertions(+), 10 deletions(-)
 
 diff --git a/doc/commands/MenuStyle.xml b/doc/commands/MenuStyle.xml
-index fda282d..8618fe6 100644
+index 4e8e74e..ce431e1 100644
 --- a/doc/commands/MenuStyle.xml
 +++ b/doc/commands/MenuStyle.xml
 @@ -58,7 +58,7 @@ PopupDelay,
@@ -24,7 +24,7 @@ index fda282d..8618fe6 100644
  TrianglesSolid / TrianglesRelief,
  PopupImmediately / PopupDelayed,
  PopdownImmediately / PopdownDelayed,
-@@ -432,6 +432,11 @@ left edge all the way to the right edge.  Short separators leave a
+@@ -436,6 +436,11 @@ left edge all the way to the right edge.  Short separators leave a
  few pixels to the edges of the menu.</para>
  
  <para>
@@ -110,10 +110,10 @@ index 3e4ea2c..23d0102 100644
  			break;
  		default:
 diff --git a/fvwm/menus.c b/fvwm/menus.c
-index 28af4f2..4e67fbe 100644
+index b73ed50..189b8f2 100644
 --- a/fvwm/menus.c
 +++ b/fvwm/menus.c
-@@ -1659,6 +1659,10 @@ static Bool size_menu_vertically(MenuSizingParameters *msp)
+@@ -1662,6 +1662,10 @@ static Bool size_menu_vertically(MenuSizingParameters *msp)
  		separator_height = (last_item_has_relief) ?
  			MENU_SEPARATOR_HEIGHT + relief_thickness :
  			MENU_SEPARATOR_TOTAL_HEIGHT;
@@ -125,18 +125,18 @@ index 28af4f2..4e67fbe 100644
  		if (MI_IS_TITLE(mi))
  		{
 diff --git a/fvwm/menustyle.c b/fvwm/menustyle.c
-index e33df5a..cc65d7f 100644
+index ea775a5..51b06c1 100644
 --- a/fvwm/menustyle.c
 +++ b/fvwm/menustyle.c
-@@ -432,6 +432,7 @@ static int menustyle_get_styleopt_index(char *option)
- 		"TitleColorset", "HilightTitleBack",
+@@ -433,6 +433,7 @@ static int menustyle_get_styleopt_index(char *option)
  		"TitleFont",
  		"VerticalMargins",
-+		"VerticalMargins", "FlatSeparators",
+ 		"UniqueHotkeyActivatesImmediate",
++		"FlatSeparators",
  		NULL
  	};
  
-@@ -906,6 +907,7 @@ MenuStyle *menustyle_parse_style(F_CMD_ARGS)
+@@ -901,6 +902,7 @@ MenuStyle *menustyle_parse_style(F_CMD_ARGS)
  			ST_SCROLL_OFF_PAGE(tmpms) = 1;
  			ST_DO_HILIGHT_TITLE_BACK(tmpms) = 0;
  			ST_USING_DEFAULT_TITLEFONT(tmpms) = True;
@@ -144,17 +144,17 @@ index e33df5a..cc65d7f 100644
  			has_gc_changed = True;
  			option = "fvwm";
  		}
-@@ -1601,6 +1603,9 @@ MenuStyle *menustyle_parse_style(F_CMD_ARGS)
- 				&ST_VERTICAL_MARGIN_BOTTOM(tmpms),
- 				0, 0);
+@@ -1606,6 +1608,9 @@ MenuStyle *menustyle_parse_style(F_CMD_ARGS)
+ 		case 63: /* UniqueHotKeyActivatesImmediate */
+ 			ST_HOTKEY_ACTIVATES_IMMEDIATE(tmpms) = on;
  			break;
-+		case 63: /* FlatSeparators */
++		case 64: /* FlatSeparators */
 +			ST_DO_FLAT_SEPARATOR(tmpms) = on;
 +			break;
  
  #if 0
  		case 99: /* PositionHints */
-@@ -1857,6 +1862,8 @@ void menustyle_copy(MenuStyle *origms, MenuStyle *destms)
+@@ -1864,6 +1869,8 @@ void menustyle_copy(MenuStyle *origms, MenuStyle *destms)
  	ST_TRIANGLES_USE_FORE(destms) = ST_TRIANGLES_USE_FORE(origms);
  	/* Title */
  	ST_DO_HILIGHT_TITLE_BACK(destms) = ST_DO_HILIGHT_TITLE_BACK(origms);
@@ -164,7 +164,7 @@ index e33df5a..cc65d7f 100644
  	menustyle_update(destms);
  
 diff --git a/fvwm/menustyle.h b/fvwm/menustyle.h
-index 19c4cff..ccc97b8 100644
+index fa97555..34dc524 100644
 --- a/fvwm/menustyle.h
 +++ b/fvwm/menustyle.h
 @@ -23,6 +23,8 @@
@@ -176,7 +176,7 @@ index 19c4cff..ccc97b8 100644
  #define ST_DO_HILIGHT_FORE(s)         ((s)->look.flags.do_hilight_fore)
  #define MST_DO_HILIGHT_FORE(m)        ((m)->s->ms->look.flags.do_hilight_fore)
  #define ST_DO_HILIGHT_TITLE_BACK(s)   ((s)->look.flags.do_hilight_title_back)
-@@ -279,6 +281,7 @@ typedef struct MenuLook
+@@ -282,6 +284,7 @@ typedef struct MenuLook
  		unsigned has_title_cset : 1;
  		unsigned do_hilight_title_back : 1;
  		unsigned using_default_titlefont : 1;
@@ -185,5 +185,5 @@ index 19c4cff..ccc97b8 100644
  	unsigned char ReliefThickness;
  	unsigned char TitleUnderlines;
 -- 
-1.7.9.5
+1.7.10.4
 

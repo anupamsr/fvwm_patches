@@ -1,7 +1,7 @@
-From 552608c3f3fdb93ad709d66c52af3cfe71304481 Mon Sep 17 00:00:00 2001
+From 3f0a82b6471892c8a03e82f9897d204b0468ae6a Mon Sep 17 00:00:00 2001
 From: Anupam Srivastava <ansrivastava@corp.ebay.com>
-Date: Fri, 3 Aug 2012 18:18:33 +0530
-Subject: [PATCH 08/16] Flux Rounded Corners
+Date: Wed, 14 Nov 2012 16:24:16 +0530
+Subject: [PATCH 07/15] Flux Rounded Corners
 
 ---
  fvwm/add_window.c   |    7 ++
@@ -11,19 +11,19 @@ Subject: [PATCH 08/16] Flux Rounded Corners
  fvwm/fvwm.h         |    6 ++
  fvwm/geometry.c     |   20 +++--
  fvwm/menus.c        |   10 +++
- fvwm/menustyle.c    |   10 +++
+ fvwm/menustyle.c    |    7 ++
  fvwm/menustyle.h    |    6 ++
  fvwm/style.c        |   97 ++++++++++++++++++++++++
  fvwm/style.h        |   22 ++++++
  fvwm/window_flags.h |   36 +++++++--
  fvwm/windowshade.c  |    1 +
- 13 files changed, 469 insertions(+), 23 deletions(-)
+ 13 files changed, 466 insertions(+), 23 deletions(-)
 
 diff --git a/fvwm/add_window.c b/fvwm/add_window.c
-index bb6c886..1c567ed 100644
+index 5e7a246..3876e45 100644
 --- a/fvwm/add_window.c
 +++ b/fvwm/add_window.c
-@@ -1687,6 +1687,7 @@ void setup_title_geometry(
+@@ -1766,6 +1766,7 @@ void setup_title_geometry(
  {
  	int width;
  	int offset;
@@ -31,7 +31,7 @@ index bb6c886..1c567ed 100644
  
  	get_title_font_size_and_offset(
  		fw, S_TITLE_DIR(SCF(*pstyle)),
-@@ -1698,6 +1699,10 @@ void setup_title_geometry(
+@@ -1777,6 +1778,10 @@ void setup_title_geometry(
  	fw->title_thickness = width;
  	fw->title_text_offset = offset;
  	fw->corner_width = fw->title_thickness + fw->boundary_width;
@@ -42,7 +42,7 @@ index bb6c886..1c567ed 100644
  	if (!HAS_TITLE(fw))
  	{
  		fw->title_thickness = 0;
-@@ -2635,6 +2640,8 @@ FvwmWindow *AddWindow(
+@@ -2714,6 +2719,8 @@ FvwmWindow *AddWindow(
  		fw = NULL;
  	}
  
@@ -52,7 +52,7 @@ index bb6c886..1c567ed 100644
  }
  
 diff --git a/fvwm/borders.c b/fvwm/borders.c
-index 6afecd2..d498106 100644
+index eefcf5d..60dd448 100644
 --- a/fvwm/borders.c
 +++ b/fvwm/borders.c
 @@ -1754,6 +1754,24 @@ static void border_fill_pixmap_background(
@@ -110,7 +110,7 @@ index 6afecd2..d498106 100644
  	{
  		border_draw_part_relief(br, frame_g, &part_g, p, is_inverted);
  		/* draw the handle marks */
-@@ -4528,6 +4562,9 @@ static window_parts border_get_titlebar_descr(
+@@ -4523,6 +4557,9 @@ static window_parts border_get_titlebar_descr(
  	JustificationType just;
  	int lbl = 0;
  	int rbl = 0;
@@ -120,7 +120,7 @@ index 6afecd2..d498106 100644
  
  	ret_td->cd = cd;
  	ret_td->frame_g = *new_g;
-@@ -4565,16 +4602,16 @@ static window_parts border_get_titlebar_descr(
+@@ -4560,16 +4597,16 @@ static window_parts border_get_titlebar_descr(
  	/* geometry of the title bar title + buttons */
  	if (!ret_td->has_vt)
  	{
@@ -141,7 +141,7 @@ index 6afecd2..d498106 100644
  		ret_td->bar_g.x = ret_td->layout.title_g.x;
  	}
  
-@@ -4626,7 +4663,7 @@ static window_parts border_get_titlebar_descr(
+@@ -4621,7 +4658,7 @@ static window_parts border_get_titlebar_descr(
  		{
  			ret_td->left_buttons_g.height = rbl;
  			ret_td->right_buttons_g.height = lbl;
@@ -150,7 +150,7 @@ index 6afecd2..d498106 100644
  			ret_td->right_buttons_g.x = ret_td->bar_g.x;
  			ret_td->left_buttons_g.y = ret_td->layout.title_g.y +
  				ret_td->layout.title_g.height;
-@@ -4636,7 +4673,7 @@ static window_parts border_get_titlebar_descr(
+@@ -4631,7 +4668,7 @@ static window_parts border_get_titlebar_descr(
  		{
  			ret_td->left_buttons_g.width = rbl;
  			ret_td->right_buttons_g.width = lbl;
@@ -159,7 +159,7 @@ index 6afecd2..d498106 100644
  			ret_td->right_buttons_g.y = ret_td->bar_g.y;
  			ret_td->left_buttons_g.x = ret_td->layout.title_g.x +
  				ret_td->layout.title_g.width;
-@@ -4649,7 +4686,7 @@ static window_parts border_get_titlebar_descr(
+@@ -4644,7 +4681,7 @@ static window_parts border_get_titlebar_descr(
  		{
  			ret_td->left_buttons_g.height = lbl;
  			ret_td->right_buttons_g.height = rbl;
@@ -168,7 +168,7 @@ index 6afecd2..d498106 100644
  			ret_td->left_buttons_g.x = ret_td->bar_g.x;
  			ret_td->right_buttons_g.y = ret_td->layout.title_g.y +
  				ret_td->layout.title_g.height;
-@@ -4659,7 +4696,7 @@ static window_parts border_get_titlebar_descr(
+@@ -4654,7 +4691,7 @@ static window_parts border_get_titlebar_descr(
  		{
  			ret_td->left_buttons_g.width = lbl;
  			ret_td->right_buttons_g.width = rbl;
@@ -177,7 +177,7 @@ index 6afecd2..d498106 100644
  			ret_td->left_buttons_g.y = ret_td->bar_g.y;
  			ret_td->right_buttons_g.x = ret_td->layout.title_g.x +
  				ret_td->layout.title_g.width;
-@@ -5002,7 +5039,7 @@ void border_get_part_geometry(
+@@ -4997,7 +5034,7 @@ void border_get_part_geometry(
  	int bw;
  	Bool title;
  
@@ -186,7 +186,7 @@ index 6afecd2..d498106 100644
  	/* ret_g->x and ret->y is just an offset relatively to the w,
  	 * maybe we can take the relief in account? */
  	switch (part)
-@@ -5020,6 +5057,10 @@ void border_get_part_geometry(
+@@ -5015,6 +5052,10 @@ void border_get_part_geometry(
  	case PART_BORDER_S:
  		ret_g->x = sidebar_g->x;
  		ret_g->y = 2 * sidebar_g->y + sidebar_g->height - bw;
@@ -197,7 +197,7 @@ index 6afecd2..d498106 100644
  		*ret_w = FW_W_SIDE(fw, 2);
  		break;
  	case PART_BORDER_W:
-@@ -5054,9 +5095,14 @@ void border_get_part_geometry(
+@@ -5049,9 +5090,14 @@ void border_get_part_geometry(
  	switch (part)
  	{
  	case PART_BORDER_N:
@@ -213,7 +213,7 @@ index 6afecd2..d498106 100644
  	case PART_BORDER_E:
  	case PART_BORDER_W:
 diff --git a/fvwm/frame.c b/fvwm/frame.c
-index a42efa9..1a01da4 100644
+index 55922ce..b25d588 100644
 --- a/fvwm/frame.c
 +++ b/fvwm/frame.c
 @@ -436,6 +436,8 @@ static void __frame_setup_window(
@@ -225,15 +225,15 @@ index a42efa9..1a01da4 100644
  	return;
  }
  
-@@ -1960,6 +1962,7 @@ void frame_free_move_resize_args(
+@@ -1954,6 +1956,7 @@ void frame_free_move_resize_args(
  			FShapeSet);
  	}
  	frame_setup_shape(fw, mra->end_g.width, mra->end_g.height, fw->wShaped);
 +	frame_make_rounded_corners(fw);
  	if (mra->flags.do_restore_gravity)
  	{
- 		mra->grav.client_grav = fw->hints.win_gravity;
-@@ -2081,6 +2084,210 @@ void frame_force_setup_window(
+ 		/* TA:  2011-09-04: There might be a chance some clients with
+@@ -2087,6 +2090,210 @@ void frame_force_setup_window(
  	return;
  }
  
@@ -466,10 +466,10 @@ index ab425df..c374faa 100644
  
  #endif /* FRAME_H */
 diff --git a/fvwm/fvwm.h b/fvwm/fvwm.h
-index 110fbd5..d2a658f 100644
+index 7738772..e106af9 100644
 --- a/fvwm/fvwm.h
 +++ b/fvwm/fvwm.h
-@@ -271,6 +271,10 @@ typedef struct
+@@ -273,6 +273,10 @@ typedef struct
  		unsigned windowshade_laziness : 2;
  		unsigned use_title_decor_rotation : 1;
  		unsigned has_border_under_title : 1;
@@ -480,7 +480,7 @@ index 110fbd5..d2a658f 100644
  		focus_policy_t focus_policy;
  	} s;
  } common_flags_t;
-@@ -549,6 +553,7 @@ typedef struct style_flags
+@@ -551,6 +555,7 @@ typedef struct style_flags
  	unsigned has_edge_resistance_move : 1;
  	unsigned has_edge_resistance_xinerama_move : 1;
  	unsigned has_handle_width : 1;
@@ -488,7 +488,7 @@ index 110fbd5..d2a658f 100644
  	unsigned has_icon : 1;
  	unsigned has_icon_boxes : 1;
  	unsigned has_icon_size_limits : 1;
-@@ -709,6 +714,7 @@ typedef struct window_style
+@@ -713,6 +718,7 @@ typedef struct window_style
  	short border_width;
  	/* resize handle width */
  	short handle_width;
@@ -541,7 +541,7 @@ index fc0eafe..fcdd2cc 100644
  	borders->total_size.width =
  		borders->top_left.width + borders->bottom_right.width;
 diff --git a/fvwm/menus.c b/fvwm/menus.c
-index 4e67fbe..33dedf9 100644
+index 189b8f2..a0616df 100644
 --- a/fvwm/menus.c
 +++ b/fvwm/menus.c
 @@ -67,6 +67,7 @@
@@ -552,7 +552,7 @@ index 4e67fbe..33dedf9 100644
  #include "libs/FGettext.h"
  
  /* ---------------------------- local definitions -------------------------- */
-@@ -3202,6 +3203,13 @@ static int do_menus_overlap(
+@@ -3194,6 +3195,13 @@ static int do_menus_overlap(
  	return x_overlap;
  }
  
@@ -566,7 +566,7 @@ index 4e67fbe..33dedf9 100644
  /*
   *
   *  Procedure:
-@@ -3775,6 +3783,8 @@ static int pop_menu_up(
+@@ -3767,6 +3775,8 @@ static int pop_menu_up(
  	 * Pop up the menu
  	 */
  
@@ -576,24 +576,21 @@ index 4e67fbe..33dedf9 100644
  	MR_X(mr) = x;
  	MR_Y(mr) = y;
 diff --git a/fvwm/menustyle.c b/fvwm/menustyle.c
-index cc65d7f..47e3f88 100644
+index 51b06c1..2a80c18 100644
 --- a/fvwm/menustyle.c
 +++ b/fvwm/menustyle.c
-@@ -433,6 +433,7 @@ static int menustyle_get_styleopt_index(char *option)
- 		"TitleFont",
+@@ -434,6 +434,7 @@ static int menustyle_get_styleopt_index(char *option)
  		"VerticalMargins",
- 		"VerticalMargins", "FlatSeparators",
+ 		"UniqueHotkeyActivatesImmediate",
+ 		"FlatSeparators",
 +		"RoundedCorners", "SlightlyRoundedCorners",
  		NULL
  	};
  
-@@ -1606,6 +1607,15 @@ MenuStyle *menustyle_parse_style(F_CMD_ARGS)
- 		case 63: /* FlatSeparators */
+@@ -1611,6 +1612,12 @@ MenuStyle *menustyle_parse_style(F_CMD_ARGS)
+ 		case 64: /* FlatSeparators */
  			ST_DO_FLAT_SEPARATOR(tmpms) = on;
  			break;
-+		case 64: /* UniqueHotKeyActivatesImmediate */
-+			ST_HOTKEY_ACTIVATES_IMMEDIATE(tmpms) = on;
-+			break;
 +		case 65: /* RoundedCorners */
 +			ST_HAS_ROUNDED_CORNERS(tmpms) = on;
 +			break;
@@ -604,7 +601,7 @@ index cc65d7f..47e3f88 100644
  #if 0
  		case 99: /* PositionHints */
 diff --git a/fvwm/menustyle.h b/fvwm/menustyle.h
-index ccc97b8..92ab11d 100644
+index 34dc524..8284a33 100644
 --- a/fvwm/menustyle.h
 +++ b/fvwm/menustyle.h
 @@ -25,6 +25,10 @@
@@ -618,7 +615,7 @@ index ccc97b8..92ab11d 100644
  #define ST_DO_HILIGHT_FORE(s)         ((s)->look.flags.do_hilight_fore)
  #define MST_DO_HILIGHT_FORE(m)        ((m)->s->ms->look.flags.do_hilight_fore)
  #define ST_DO_HILIGHT_TITLE_BACK(s)   ((s)->look.flags.do_hilight_title_back)
-@@ -282,6 +286,8 @@ typedef struct MenuLook
+@@ -285,6 +289,8 @@ typedef struct MenuLook
  		unsigned do_hilight_title_back : 1;
  		unsigned using_default_titlefont : 1;
  		unsigned do_flat_separator : 1;
@@ -628,10 +625,10 @@ index ccc97b8..92ab11d 100644
  	unsigned char ReliefThickness;
  	unsigned char TitleUnderlines;
 diff --git a/fvwm/style.c b/fvwm/style.c
-index b9af61e..19cf879 100644
+index 656c297..affffff 100644
 --- a/fvwm/style.c
 +++ b/fvwm/style.c
-@@ -532,6 +532,10 @@ static void merge_styles(
+@@ -565,6 +565,10 @@ static void merge_styles(
  		SSET_HANDLE_WIDTH(
  			*merged_style, SGET_HANDLE_WIDTH(*add_style));
  	}
@@ -642,7 +639,7 @@ index b9af61e..19cf879 100644
  	if (add_style->flags.has_icon_size_limits)
  	{
  		SSET_MIN_ICON_WIDTH(
-@@ -2553,6 +2557,20 @@ static Bool style_parse_one_style_option(
+@@ -2602,6 +2606,20 @@ static Bool style_parse_one_style_option(
  			ps->change_mask.has_color_back = 1;
  			break;
  		}
@@ -663,7 +660,7 @@ index b9af61e..19cf879 100644
  		else if (StrEquals(token, "CirculateSkipIcon"))
  		{
  			S_SET_DO_CIRCULATE_SKIP_ICON(SCF(*ps), on);
-@@ -2843,6 +2861,15 @@ static Bool style_parse_one_style_option(
+@@ -2914,6 +2932,15 @@ static Bool style_parse_one_style_option(
  			S_SET_HAS_MWM_BORDER(SCM(*ps), 1);
  			S_SET_HAS_MWM_BORDER(SCC(*ps), 1);
  		}
@@ -679,7 +676,7 @@ index b9af61e..19cf879 100644
  		else if (StrEquals(token, "FocusFollowsMouse"))
  		{
  			style_set_old_focus_policy(ps, 1);
-@@ -4002,6 +4029,50 @@ static Bool style_parse_one_style_option(
+@@ -4121,6 +4148,50 @@ static Bool style_parse_one_style_option(
  			S_SET_IS_RIGHT_TITLE_ROTATED_CW(SCM(*ps), 1);
  			S_SET_IS_RIGHT_TITLE_ROTATED_CW(SCC(*ps), 1);
  		}
@@ -730,7 +727,7 @@ index b9af61e..19cf879 100644
  		else
  		{
  			found = False;
-@@ -4136,6 +4207,12 @@ static Bool style_parse_one_style_option(
+@@ -4255,6 +4326,12 @@ static Bool style_parse_one_style_option(
  			S_SET_HAS_NO_STICKY_STIPPLED_ICON_TITLE(SCM(*ps), 1);
  			S_SET_HAS_NO_STICKY_STIPPLED_ICON_TITLE(SCC(*ps), 1);
  		}
@@ -743,7 +740,7 @@ index b9af61e..19cf879 100644
  		else if (StrEquals(token, "Slippery"))
  		{
  			S_SET_IS_STICKY_ACROSS_PAGES(SCF(*ps), !on);
-@@ -5126,6 +5203,20 @@ void check_window_style_change(
+@@ -5268,6 +5345,20 @@ void check_window_style_change(
  	{
  		flags->do_update_rotated_title = 1;
  	}
@@ -764,7 +761,7 @@ index b9af61e..19cf879 100644
  	
  	if (S_HAS_BORDER_UNDER_TITLE(SCC(*ret_style)))
  	{
-@@ -5390,6 +5481,12 @@ void check_window_style_change(
+@@ -5532,6 +5623,12 @@ void check_window_style_change(
  		flags->do_update_modules_flags = 1;
  	}
  
@@ -778,10 +775,10 @@ index b9af61e..19cf879 100644
  	    ret_style->change_mask.use_backing_store ||
  	    ret_style->change_mask.use_parent_relative)
 diff --git a/fvwm/style.h b/fvwm/style.h
-index c071994..f7837c7 100644
+index f6019fe..9b89e6e 100644
 --- a/fvwm/style.h
 +++ b/fvwm/style.h
-@@ -21,6 +21,8 @@
+@@ -24,6 +24,8 @@
  	((sf)->has_color_fore)
  #define SHAS_HANDLE_WIDTH(sf) \
  	((sf)->has_handle_width)
@@ -790,7 +787,7 @@ index c071994..f7837c7 100644
  #define SHAS_ICON(sf) \
  	((sf)->has_icon)
  #define SHAS_ICON_BOXES(sf) \
-@@ -381,6 +383,22 @@
+@@ -384,6 +386,22 @@
  	((c).s.has_border_under_title)
  #define S_SET_HAS_BORDER_UNDER_TITLE(c,x) \
  	((c).s.has_border_under_title = !!(x))
@@ -813,7 +810,7 @@ index c071994..f7837c7 100644
  #define S_DO_EWMH_MINI_ICON_OVERRIDE(c) \
  	((c).s.do_ewmh_mini_icon_override)
  #define S_SET_DO_EWMH_MINI_ICON_OVERRIDE(c,x) \
-@@ -603,6 +621,10 @@
+@@ -606,6 +624,10 @@
  	((s).handle_width)
  #define SSET_HANDLE_WIDTH(s,x) \
  	((s).handle_width = (x))
@@ -891,5 +888,5 @@ index 3c58a91..2dad3a8 100644
  	BroadcastConfig(M_CONFIGURE_WINDOW, fw);
  	BroadcastPacket(
 -- 
-1.7.9.5
+1.7.10.4
 

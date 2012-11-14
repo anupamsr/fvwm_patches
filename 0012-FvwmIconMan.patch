@@ -1,7 +1,7 @@
-From e2ce63d4f36492d2529186765c7c9d9d9f841f45 Mon Sep 17 00:00:00 2001
+From 2bc15a09671a201058c5a8568ae4ed896b4c00db Mon Sep 17 00:00:00 2001
 From: Anupam Srivastava <ansrivastava@corp.ebay.com>
 Date: Fri, 3 Aug 2012 18:19:44 +0530
-Subject: [PATCH 13/16] FvwmIconMan
+Subject: [PATCH 12/15] FvwmIconMan
 
 ---
  modules/FvwmIconMan/FvwmIconMan.h |    2 ++
@@ -23,10 +23,10 @@ index e636b43..ee1a1fb 100644
  	/* X11 state */
  	Window theWindow, theFrame;
 diff --git a/modules/FvwmIconMan/readconfig.c b/modules/FvwmIconMan/readconfig.c
-index 57b9527..a11a926 100644
+index 2bf6cda..0fc06dd 100644
 --- a/modules/FvwmIconMan/readconfig.c
 +++ b/modules/FvwmIconMan/readconfig.c
-@@ -2023,6 +2023,40 @@ void read_in_resources(void)
+@@ -2021,6 +2021,40 @@ void read_in_resources(void)
  	}
  	SET_MANAGER(manager, relief_thickness, n);
        }
@@ -124,5 +124,5 @@ index eba338c..b03dfcd 100644
  			else if (button_state & SELECT_CONTEXT)
  			{
 -- 
-1.7.9.5
+1.7.10.4
 
