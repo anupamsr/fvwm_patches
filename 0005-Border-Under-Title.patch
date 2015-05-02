@@ -1,24 +1,24 @@
-From 78ed756b9ab82d3dca3a0fdf6e9758ea30f594de Mon Sep 17 00:00:00 2001
+From 00af59b5acec0210e4ce854e212337a22c36890d Mon Sep 17 00:00:00 2001
 From: Anupam Srivastava <ansrivastava@corp.ebay.com>
-Date: Fri, 3 Aug 2012 18:18:02 +0530
-Subject: [PATCH 05/15] Border Unter Title
+Date: Sat, 2 May 2015 11:15:56 +0530
+Subject: [PATCH 05/15] Border Under Title
 
 ---
- fvwm/borders.c      |   28 +++++++++++++++++++++++++++-
- fvwm/borders.h      |    7 ++++++-
- fvwm/fvwm.h         |    1 +
- fvwm/geometry.c     |   29 ++++++++++++++++++++++++-----
- fvwm/geometry.h     |    2 ++
- fvwm/style.c        |   11 +++++++++++
- fvwm/style.h        |    4 ++++
- fvwm/window_flags.h |    6 ++++++
- 8 files changed, 81 insertions(+), 7 deletions(-)
+ fvwm/borders.c      | 28 +++++++++++++++++++++++++++-
+ fvwm/borders.h      |  7 ++++++-
+ fvwm/fvwm.h         |  1 +
+ fvwm/geometry.c     | 28 +++++++++++++++++++++++-----
+ fvwm/geometry.h     |  2 ++
+ fvwm/style.c        | 11 +++++++++++
+ fvwm/style.h        |  4 ++++
+ fvwm/window_flags.h |  6 ++++++
+ 8 files changed, 80 insertions(+), 7 deletions(-)
 
 diff --git a/fvwm/borders.c b/fvwm/borders.c
-index c8ba244..11ce997 100644
+index c18f777..8e24aed 100644
 --- a/fvwm/borders.c
 +++ b/fvwm/borders.c
-@@ -4992,6 +4992,7 @@ void border_get_part_geometry(
+@@ -4990,6 +4990,7 @@ void border_get_part_geometry(
  	rectangle *ret_g, Window *ret_w)
  {
  	int bw;
@@ -26,7 +26,7 @@ index c8ba244..11ce997 100644
  
  	bw = fw->boundary_width;
  	/* ret_g->x and ret->y is just an offset relatively to the w,
-@@ -5062,7 +5063,32 @@ void border_get_part_geometry(
+@@ -5060,7 +5061,32 @@ void border_get_part_geometry(
  		ret_g->height = sidebar_g->y;
  		break;
  	default:
@@ -79,7 +79,7 @@ index 8407ea7..9db2e07 100644
  
  typedef enum
 diff --git a/fvwm/fvwm.h b/fvwm/fvwm.h
-index 98b27a1..a709ee7 100644
+index c1510b3..187db83 100644
 --- a/fvwm/fvwm.h
 +++ b/fvwm/fvwm.h
 @@ -271,6 +271,7 @@ typedef struct
@@ -91,7 +91,7 @@ index 98b27a1..a709ee7 100644
  	} s;
  } common_flags_t;
 diff --git a/fvwm/geometry.c b/fvwm/geometry.c
-index f6eeeeb..fc0eafe 100644
+index 226997f..8edb052 100644
 --- a/fvwm/geometry.c
 +++ b/fvwm/geometry.c
 @@ -46,6 +46,9 @@
@@ -104,17 +104,16 @@ index f6eeeeb..fc0eafe 100644
  /* ---------------------------- local variables ---------------------------- */
  
  /* ---------------------------- exported variables (globals) --------------- */
-@@ -343,7 +346,8 @@ void get_shaded_geometry(
- 	int big_height = big_g->height;
- 	int d;
- 
--	get_window_borders(fw, &b);
-+	__get_window_borders(fw, &b, 1);
-+	
+@@ -352,7 +355,7 @@ void get_shaded_geometry(
+ 		get_window_borders_no_title(fw, &b);
+ 		break;
+ 	default:
+-		get_window_borders(fw, &b);
++		__get_window_borders(fw, &b, 1);
+ 		break;
+ 	}
  	*small_g = *big_g;
- 	d = 0;
- 	switch (SHADED_DIR(fw))
-@@ -469,23 +473,38 @@ void get_shaded_client_window_pos(
+@@ -480,23 +483,38 @@ void get_shaded_client_window_pos(
  void get_window_borders(
  	const FvwmWindow *fw, size_borders *borders)
  {
@@ -125,7 +124,7 @@ index f6eeeeb..fc0eafe 100644
 +	const FvwmWindow *fw, size_borders *borders, Bool is_shaded)
 +{
 +	int title_thickness;
-+	
++
  	borders->top_left.width = fw->boundary_width;
  	borders->bottom_right.width = fw->boundary_width;
  	borders->top_left.height = fw->boundary_width;
@@ -136,7 +135,7 @@ index f6eeeeb..fc0eafe 100644
 +	{
 +		title_thickness += fw->boundary_width;
 +	}
-+	
++
  	switch (GET_TITLE_DIR(fw))
  	{
  	case DIR_N:
@@ -171,7 +170,7 @@ index a20899b..ee5ea2a 100644
  	const FvwmWindow *fw, size_borders *borders);
  void set_window_border_size(
 diff --git a/fvwm/style.c b/fvwm/style.c
-index 6ea7e39..b26fa0b 100644
+index f439b8d..bb6ecb7 100644
 --- a/fvwm/style.c
 +++ b/fvwm/style.c
 @@ -2259,6 +2259,12 @@ static Bool style_parse_one_style_option(
@@ -187,20 +186,20 @@ index 6ea7e39..b26fa0b 100644
  		else if (StrEquals(token, "BorderWidth"))
  		{
  			if (GetIntegerArguments(rest, &rest, val, 1))
-@@ -5233,6 +5239,11 @@ void check_window_style_change(
- 	{
+@@ -5232,6 +5238,11 @@ void check_window_style_change(
  		flags->do_update_rotated_title = 1;
  	}
-+	
+ 
 +	if (S_HAS_BORDER_UNDER_TITLE(SCC(*ret_style)))
 +	{
 +		flags->do_redecorate = True;
 +	}
- 
++
  	/* has_mwm_border
  	 * has_mwm_buttons */
+ 	if (S_HAS_MWM_BORDER(SCC(*ret_style)) ||
 diff --git a/fvwm/style.h b/fvwm/style.h
-index b19b5c4..7c57e17 100644
+index 40f885a..0f9bc31 100644
 --- a/fvwm/style.h
 +++ b/fvwm/style.h
 @@ -376,6 +376,10 @@
@@ -232,5 +231,5 @@ index 631972a..9d04901 100644
  /* access to the special flags of a window */
  #define DO_REUSE_DESTROYED(fw) \
 -- 
-1.7.10.4
+2.0.5
 

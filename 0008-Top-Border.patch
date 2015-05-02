@@ -1,21 +1,21 @@
-From 08b31693997fc68482d7c1b52895c25ea913c91d Mon Sep 17 00:00:00 2001
+From 012aa8077be223dbee2926bcd380b2dd4caa7836 Mon Sep 17 00:00:00 2001
 From: Anupam Srivastava <ansrivastava@corp.ebay.com>
-Date: Wed, 14 Nov 2012 16:24:59 +0530
+Date: Sat, 2 May 2015 13:56:23 +0530
 Subject: [PATCH 08/15] Top Border
 
 ---
- fvwm/builtins.c     |   15 +++++++++++++++
- fvwm/frame.c        |    9 ++++++++-
- fvwm/fvwm.h         |    1 +
- fvwm/geometry.c     |   36 ++++++++++++++++++++++++++++++++----
- fvwm/screen.h       |    1 +
- fvwm/style.c        |   11 +++++++++++
- fvwm/style.h        |    5 +++++
- fvwm/window_flags.h |    6 ++++++
+ fvwm/builtins.c     | 15 +++++++++++++++
+ fvwm/frame.c        |  9 ++++++++-
+ fvwm/fvwm.h         |  1 +
+ fvwm/geometry.c     | 36 ++++++++++++++++++++++++++++++++----
+ fvwm/screen.h       |  1 +
+ fvwm/style.c        | 11 +++++++++++
+ fvwm/style.h        |  5 +++++
+ fvwm/window_flags.h |  6 ++++++
  8 files changed, 79 insertions(+), 5 deletions(-)
 
 diff --git a/fvwm/builtins.c b/fvwm/builtins.c
-index 199a323..7157e1c 100644
+index 0ef90d2..ce22c42 100644
 --- a/fvwm/builtins.c
 +++ b/fvwm/builtins.c
 @@ -495,6 +495,21 @@ static void do_title_style(F_CMD_ARGS, Bool do_add)
@@ -41,10 +41,10 @@ index 199a323..7157e1c 100644
  		{
  			int height = 0;
 diff --git a/fvwm/frame.c b/fvwm/frame.c
-index b25d588..d0aa13c 100644
+index acfdaaa..1d31e8d 100644
 --- a/fvwm/frame.c
 +++ b/fvwm/frame.c
-@@ -1369,7 +1369,14 @@ void frame_get_titlebar_dimensions(
+@@ -1373,7 +1373,14 @@ void frame_get_titlebar_dimensions(
  	tb_thick = fw->title_thickness;
  	nbuttons = fw->nr_left_buttons + fw->nr_right_buttons;
  	nbuttons_big = 0;
@@ -61,7 +61,7 @@ index b25d588..d0aa13c 100644
  	if (nbuttons > 0 && t_length < MIN_WINDOW_TITLE_LENGTH)
  	{
 diff --git a/fvwm/fvwm.h b/fvwm/fvwm.h
-index e106af9..4dda9c7 100644
+index c24390e..73a436c 100644
 --- a/fvwm/fvwm.h
 +++ b/fvwm/fvwm.h
 @@ -277,6 +277,7 @@ typedef struct
@@ -73,18 +73,18 @@ index e106af9..4dda9c7 100644
  	} s;
  } common_flags_t;
 diff --git a/fvwm/geometry.c b/fvwm/geometry.c
-index fcdd2cc..3ed9f30 100644
+index 9e701fe..df9bd8d 100644
 --- a/fvwm/geometry.c
 +++ b/fvwm/geometry.c
-@@ -480,6 +480,7 @@ static void __get_window_borders(
+@@ -490,6 +490,7 @@ static void __get_window_borders(
  	const FvwmWindow *fw, size_borders *borders, Bool is_shaded)
  {
  	int title_thickness;
 +	int *title_border = NULL;
  	int bw;
- 	
+ 
  	bw = HAS_FLUXBOX_HANDLES(fw) ? 1 : fw->boundary_width;
-@@ -497,18 +498,25 @@ static void __get_window_borders(
+@@ -506,18 +507,25 @@ static void __get_window_borders(
  	switch (GET_TITLE_DIR(fw))
  	{
  	case DIR_N:
@@ -110,15 +110,15 @@ index fcdd2cc..3ed9f30 100644
 +		*title_border = 1;
 +	}
 +	*title_border += title_thickness;
-+	
++
  	borders->total_size.width =
  		borders->top_left.width + borders->bottom_right.width;
  	borders->total_size.height =
-@@ -529,6 +537,26 @@ void get_window_borders_no_title(
+@@ -538,6 +546,26 @@ void get_window_borders_no_title(
  	borders->bottom_right.width = bw;
  	borders->top_left.height = bw;
  	borders->bottom_right.height = fw->boundary_width;
-+	
++
 +	if (HAS_NO_TOP_BORDER(fw))
 +	{
 +		switch (GET_TITLE_DIR(fw))
@@ -142,7 +142,7 @@ index fcdd2cc..3ed9f30 100644
  		borders->top_left.width + borders->bottom_right.width;
  	borders->total_size.height =
 diff --git a/fvwm/screen.h b/fvwm/screen.h
-index 48c23e2..16f57bc 100644
+index 71e85a1..ab14d1b 100644
 --- a/fvwm/screen.h
 +++ b/fvwm/screen.h
 @@ -286,6 +286,7 @@ typedef struct FvwmDecor
@@ -154,10 +154,10 @@ index 48c23e2..16f57bc 100644
  	TitleButton buttons[NUMBER_OF_TITLE_BUTTONS];
  	TitleButton titlebar;
 diff --git a/fvwm/style.c b/fvwm/style.c
-index affffff..18b88cd 100644
+index aff2356..e57858c 100644
 --- a/fvwm/style.c
 +++ b/fvwm/style.c
-@@ -4738,6 +4738,12 @@ static Bool style_parse_one_style_option(
+@@ -4736,6 +4736,12 @@ static Bool style_parse_one_style_option(
  			ps->change_mask.has_title_format_string = 1;
  
  		}
@@ -170,7 +170,7 @@ index affffff..18b88cd 100644
  		else if (StrEquals(token, "TopTitleRotated"))
  		{
  			S_SET_IS_TOP_TITLE_ROTATED(SCF(*ps), on);
-@@ -5365,6 +5371,11 @@ void check_window_style_change(
+@@ -5363,6 +5369,11 @@ void check_window_style_change(
  		flags->do_redecorate = True;
  	}
  
@@ -183,7 +183,7 @@ index affffff..18b88cd 100644
  	 * has_mwm_buttons */
  	if (S_HAS_MWM_BORDER(SCC(*ret_style)) ||
 diff --git a/fvwm/style.h b/fvwm/style.h
-index 9b89e6e..c74207a 100644
+index 749972c..7cfba58 100644
 --- a/fvwm/style.h
 +++ b/fvwm/style.h
 @@ -402,6 +402,11 @@
@@ -216,5 +216,5 @@ index e54b3dd..c347c9c 100644
  /* access to the special flags of a window */
  #define DO_REUSE_DESTROYED(fw) \
 -- 
-1.7.10.4
+2.0.5
 

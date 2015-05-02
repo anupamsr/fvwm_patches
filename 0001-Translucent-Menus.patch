@@ -1,16 +1,16 @@
-From 15463d969c9ab70c2aea7589fdc4c4920fa31c34 Mon Sep 17 00:00:00 2001
+From e417d22ceef608ca6fee515ded308ccb7542f82e Mon Sep 17 00:00:00 2001
 From: Anupam Srivastava <ansrivastava@corp.ebay.com>
-Date: Fri, 3 Aug 2012 18:15:49 +0530
+Date: Sat, 2 May 2015 10:46:50 +0530
 Subject: [PATCH 01/15] Translucent Menus
 
 ---
- fvwm/colorset.c        |   50 +++++++++++
- fvwm/menuroot.h        |    3 +
- fvwm/menus.c           |  215 ++++++++++++++++++++++++++++++++++++++++++------
- fvwm/menus.h           |    3 +
- libs/Colorset.h        |   10 +++
- libs/PictureGraphics.c |    2 +-
- libs/PictureGraphics.h |    4 +-
+ fvwm/colorset.c        |  50 ++++++++++++
+ fvwm/menuroot.h        |   3 +
+ fvwm/menus.c           | 215 +++++++++++++++++++++++++++++++++++++++++++------
+ fvwm/menus.h           |   3 +
+ libs/Colorset.h        |  10 +++
+ libs/PictureGraphics.c |   2 +-
+ libs/PictureGraphics.h |   4 +-
  7 files changed, 262 insertions(+), 25 deletions(-)
 
 diff --git a/fvwm/colorset.c b/fvwm/colorset.c
@@ -145,7 +145,7 @@ index d9f33d6..de5e2d6 100644
  
  /* access macros to dynamic menu members */
 diff --git a/fvwm/menus.c b/fvwm/menus.c
-index fa3bd9b..b73ed50 100644
+index 885eada..6772dee 100644
 --- a/fvwm/menus.c
 +++ b/fvwm/menus.c
 @@ -85,6 +85,19 @@
@@ -177,7 +177,7 @@ index fa3bd9b..b73ed50 100644
  
  /* ---------------------------- local variables ---------------------------- */
  
-@@ -392,12 +407,22 @@ static void animated_move_back(
+@@ -388,12 +403,22 @@ static void animated_move_back(
  		Bool transparent_bg = False;
  
  		/* move it back */
@@ -202,7 +202,7 @@ index fa3bd9b..b73ed50 100644
  		}
  		AnimatedMoveOfWindow(
  			MR_WINDOW(mr), act_x, act_y, act_x - MR_XANIMATION(mr),
-@@ -1918,6 +1943,7 @@ static void make_menu_window(MenuRoot *mr, Bool is_tear_off)
+@@ -1914,6 +1939,7 @@ static void make_menu_window(MenuRoot *mr, Bool is_tear_off)
  				/* Doh.  Use the standard display instead. */
  				MR_CREATE_DPY(mr) = dpy;
  			}
@@ -210,7 +210,7 @@ index fa3bd9b..b73ed50 100644
  		}
  		else
  		{
-@@ -2722,7 +2748,37 @@ static void paint_menu(
+@@ -2718,7 +2744,37 @@ static void paint_menu(
  	}
  	MR_IS_PAINTED(mr) = 1;
  	/* paint the menu background */
@@ -220,7 +220,7 @@ index fa3bd9b..b73ed50 100644
 +		Pixmap trans = None;
 +		FvwmRenderAttributes fra;
 +		colorset_t *colorset = &Colorset[ST_CSET_MENU(ms)];
-+	
++
 +		fra.mask = 0;
 +		if (colorset->translucent_tint_percent > 0)
 +		{
@@ -249,7 +249,7 @@ index fa3bd9b..b73ed50 100644
  	{
  		if (MR_IS_BACKGROUND_SET(mr) == False)
  		{
-@@ -3529,10 +3585,7 @@ static int pop_menu_up(
+@@ -3527,10 +3583,7 @@ static int pop_menu_up(
  					MR_HAS_POPPED_UP_RIGHT(mr) = 0;
  				}
  				MR_XANIMATION(parent_menu) += end_x - prev_x;
@@ -261,7 +261,7 @@ index fa3bd9b..b73ed50 100644
  				{
  					transparent_bg = True;
  					get_menu_repaint_transparent_parameters(
-@@ -3711,10 +3764,21 @@ static int pop_menu_up(
+@@ -3709,10 +3762,21 @@ static int pop_menu_up(
  	 */
  
  	XMoveWindow(dpy, MR_WINDOW(mr), x, y);
@@ -286,7 +286,7 @@ index fa3bd9b..b73ed50 100644
  	XFlush(dpy);
  	MR_MAPPED_COPIES(mr)++;
  	MST_USAGE_COUNT(mr)++;
-@@ -6255,16 +6319,122 @@ void update_transparent_menu_bg(
+@@ -6276,16 +6340,122 @@ void update_transparent_menu_bg(
  	{
  		last = True;
  	}
@@ -316,13 +316,13 @@ index fa3bd9b..b73ed50 100644
 +			fra.tint = colorset->translucent_tint;
 +			fra.tint_percent = colorset->translucent_tint_percent;
 +		}
-+		if (current_x == step_x) 
++		if (current_x == step_x)
 +		{
-+			/* Reuse the old pixmap for the part of the menu 
++			/* Reuse the old pixmap for the part of the menu
 +			 * that has not moved. (This can be extended to get
 +			 * two new rectangles, one in each direction)
-+			 * 
-+			 * It saves the unmapping of the window and makes 
++			 *
++			 * It saves the unmapping of the window and makes
 +			 * Things less flickering.
 +			 */
 +			GC my_gc;
@@ -343,24 +343,24 @@ index fa3bd9b..b73ed50 100644
 +
 +			if (current_y < step_y)
 +			{
-+				XCopyArea(dpy, MR_WINDOW(mr), trans, my_gc, 0, 
-+					  step_y-current_y, MR_WIDTH(mr), 
++				XCopyArea(dpy, MR_WINDOW(mr), trans, my_gc, 0,
++					  step_y-current_y, MR_WIDTH(mr),
 +					  MR_HEIGHT(mr)-(step_y-current_y),
 +					  0,0);
 +				tmp = PGraphicsCreateTranslucent(
 +					dpy, MR_WINDOW(mr), &fra,
 +					BACK_GC(ST_MENU_INACTIVE_GCS(ms)),
-+					current_x, current_y+MR_HEIGHT(mr), 
++					current_x, current_y+MR_HEIGHT(mr),
 +					MR_WIDTH(mr), step_y-current_y);
 +
 +				XCopyArea(dpy, tmp, trans, my_gc, 0, 0,
 +					  MR_WIDTH(mr), step_y-current_y,0,
 +					  MR_HEIGHT(mr)-(step_y-current_y));
 +			}
-+			else 
++			else
 +			{
-+				XCopyArea(dpy, MR_WINDOW(mr), trans, my_gc, 0, 
-+					  0, MR_WIDTH(mr), 
++				XCopyArea(dpy, MR_WINDOW(mr), trans, my_gc, 0,
++					  0, MR_WIDTH(mr),
 +					  MR_HEIGHT(mr)-(current_y-step_y), 0,
 +					  current_y-step_y);
 +				tmp = PGraphicsCreateTranslucent(
@@ -376,7 +376,7 @@ index fa3bd9b..b73ed50 100644
 +			MR_Y(mr) = step_y;
 +			XFreePixmap(dpy, tmp);
 +			XFreeGC(dpy,my_gc);
-+		}		
++		}
 +		else
 +		{
 +			XUnmapWindow(dpy, MR_WINDOW(mr));
@@ -385,7 +385,7 @@ index fa3bd9b..b73ed50 100644
 +			trans = PGraphicsCreateTranslucent(
 +				dpy, MR_WINDOW(mr), &fra,
 +				BACK_GC(ST_MENU_INACTIVE_GCS(ms)),
-+				step_x, step_y, MR_WIDTH(mr), 
++				step_x, step_y, MR_WIDTH(mr),
 +				MR_HEIGHT(mr));
 +			XMapRaised(dpy, MR_WINDOW(mr));
 +		}
@@ -400,7 +400,7 @@ index fa3bd9b..b73ed50 100644
 +				MR_HEIGHT(mr) - 1, (Pdepth < 2) ?
 +				SHADOW_GC(MST_MENU_INACTIVE_GCS(mr)) :
 +				HILIGHT_GC(MST_MENU_INACTIVE_GCS(mr)),
-+				SHADOW_GC(MST_MENU_INACTIVE_GCS(mr)), 
++				SHADOW_GC(MST_MENU_INACTIVE_GCS(mr)),
 +				MST_BORDER_WIDTH(mr));
 +		}
 +	}
@@ -415,7 +415,7 @@ index fa3bd9b..b73ed50 100644
  }
  
  
-@@ -6305,10 +6475,7 @@ void repaint_transparent_menu(
+@@ -6326,10 +6496,7 @@ void repaint_transparent_menu(
  	}
  	if (!is_bg_set)
  	{
@@ -427,7 +427,7 @@ index fa3bd9b..b73ed50 100644
  	}
  	/* redraw the background of non active item */
  	for (mi = MR_FIRST_ITEM(mr); mi != NULL; mi = MI_NEXT_ITEM(mi))
-@@ -6932,10 +7099,12 @@ void UpdateMenuColorset(int cset)
+@@ -6953,10 +7120,12 @@ void UpdateMenuColorset(int cset)
  				SetWindowBackground(
  					dpy, MR_WINDOW(mr), MR_WIDTH(mr),
  					MR_HEIGHT(mr),
@@ -458,7 +458,7 @@ index 28e9db3..6b620b2 100644
  struct MenuStyle;
  struct MenuReturn;
 diff --git a/libs/Colorset.h b/libs/Colorset.h
-index 56d2929..b9b5a1f 100644
+index d610b52..6c1892e 100644
 --- a/libs/Colorset.h
 +++ b/libs/Colorset.h
 @@ -51,6 +51,10 @@ typedef struct
@@ -521,5 +521,5 @@ index ec75601..5e0001d 100644
  Pixmap PGraphicsCreateDitherPixmap(
  	Display *dpy, Window win, Drawable src, Pixmap mask, int depth, GC gc,
 -- 
-1.7.10.4
+2.0.5
 

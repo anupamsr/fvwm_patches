@@ -1,19 +1,19 @@
-From 2bc15a09671a201058c5a8568ae4ed896b4c00db Mon Sep 17 00:00:00 2001
+From 250f886f1e4b10aaab49cc12dcf3cc3a3aeffe8d Mon Sep 17 00:00:00 2001
 From: Anupam Srivastava <ansrivastava@corp.ebay.com>
-Date: Fri, 3 Aug 2012 18:19:44 +0530
+Date: Sat, 2 May 2015 14:41:55 +0530
 Subject: [PATCH 12/15] FvwmIconMan
 
 ---
- modules/FvwmIconMan/FvwmIconMan.h |    2 ++
- modules/FvwmIconMan/readconfig.c  |   34 ++++++++++++++++++++++++++++++++++
- modules/FvwmIconMan/xmanager.c    |   31 +++++++++++++++++++++++++++++++
+ modules/FvwmIconMan/FvwmIconMan.h |  2 ++
+ modules/FvwmIconMan/readconfig.c  | 34 ++++++++++++++++++++++++++++++++++
+ modules/FvwmIconMan/xmanager.c    | 31 +++++++++++++++++++++++++++++++
  3 files changed, 67 insertions(+)
 
 diff --git a/modules/FvwmIconMan/FvwmIconMan.h b/modules/FvwmIconMan/FvwmIconMan.h
-index e636b43..ee1a1fb 100644
+index cbca2f7..caaa3eb 100644
 --- a/modules/FvwmIconMan/FvwmIconMan.h
 +++ b/modules/FvwmIconMan/FvwmIconMan.h
-@@ -316,6 +316,8 @@ typedef struct win_manager {
+@@ -317,6 +317,8 @@ typedef struct win_manager {
  	char *tips_fontname;
  	char *tips_formatstring;
  	ftips_config *tips_conf;
@@ -23,10 +23,10 @@ index e636b43..ee1a1fb 100644
  	/* X11 state */
  	Window theWindow, theFrame;
 diff --git a/modules/FvwmIconMan/readconfig.c b/modules/FvwmIconMan/readconfig.c
-index 2bf6cda..0fc06dd 100644
+index 017db10..06de091 100644
 --- a/modules/FvwmIconMan/readconfig.c
 +++ b/modules/FvwmIconMan/readconfig.c
-@@ -2021,6 +2021,40 @@ void read_in_resources(void)
+@@ -2038,6 +2038,40 @@ void read_in_resources(void)
  	}
  	SET_MANAGER(manager, relief_thickness, n);
        }
@@ -68,10 +68,10 @@ index 2bf6cda..0fc06dd 100644
  	      p = read_next_cmd(READ_ARG);
  	      if (!p) {
 diff --git a/modules/FvwmIconMan/xmanager.c b/modules/FvwmIconMan/xmanager.c
-index eba338c..b03dfcd 100644
+index f0276cf..f18b475 100644
 --- a/modules/FvwmIconMan/xmanager.c
 +++ b/modules/FvwmIconMan/xmanager.c
-@@ -1365,6 +1365,8 @@ static void get_button_geometry(WinManager *man, Button *button,
+@@ -1379,6 +1379,8 @@ static void get_button_geometry(WinManager *man, Button *button,
  
    g->text_y = g->button_y + text_pad;
    g->text_base = g->text_y + man->FButtonFont->ascent;
@@ -80,7 +80,7 @@ index eba338c..b03dfcd 100644
  }
  
  static void draw_button_background(
-@@ -1637,6 +1639,33 @@ static void draw_relief(WinManager *man, int button_state, ButtonGeometry *g,
+@@ -1651,6 +1653,33 @@ static void draw_relief(WinManager *man, int button_state, ButtonGeometry *g,
    }
  }
  
@@ -114,15 +114,15 @@ index eba338c..b03dfcd 100644
  static void draw_button(WinManager *man, int button, int force)
  {
  	Button *b;
-@@ -1825,6 +1854,8 @@ static void draw_button(WinManager *man, int button, int force)
+@@ -1839,6 +1868,8 @@ static void draw_button(WinManager *man, int button, int force)
  				draw_relief(
  					man, button_state, &g, context1,
  					context2);
 +
 +                draw_rounded_corners(man, &g, context1);
  			}
- 			else if (button_state & SELECT_CONTEXT)
- 			{
+ 			else if (button_state == SELECT_CONTEXT ||
+ 				 button_state == FOCUS_SELECT_CONTEXT ||
 -- 
-1.7.10.4
+2.0.5
 

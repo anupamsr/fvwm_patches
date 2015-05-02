@@ -1,15 +1,15 @@
-From 8ba6b7afc187462511acd5eace406084068c86d2 Mon Sep 17 00:00:00 2001
+From f400242616014cac5755923376cb4b70f97f956e Mon Sep 17 00:00:00 2001
 From: Anupam Srivastava <ansrivastava@corp.ebay.com>
-Date: Wed, 14 Nov 2012 16:16:43 +0530
+Date: Sat, 2 May 2015 11:09:18 +0530
 Subject: [PATCH 04/15] Flat Separators
 
 ---
- doc/commands/MenuStyle.xml |    7 ++++++-
- fvwm/menuitem.c            |   25 ++++++++++++++++---------
- fvwm/menus.c               |    4 ++++
- fvwm/menustyle.c           |    7 +++++++
- fvwm/menustyle.h           |    3 +++
- 5 files changed, 36 insertions(+), 10 deletions(-)
+ doc/commands/MenuStyle.xml |  7 ++++++-
+ fvwm/menuitem.c            | 25 ++++++++++++++++---------
+ fvwm/menus.c               |  4 ++++
+ fvwm/menustyle.c           |  8 +++++++-
+ fvwm/menustyle.h           |  3 +++
+ 5 files changed, 36 insertions(+), 11 deletions(-)
 
 diff --git a/doc/commands/MenuStyle.xml b/doc/commands/MenuStyle.xml
 index 4e8e74e..ce431e1 100644
@@ -37,7 +37,7 @@ index 4e8e74e..ce431e1 100644
  <fvwmopt cmd="MenuStyle" opt="TrianglesRelief"/>
  affect how the small triangles for sub menus is drawn.  Solid
 diff --git a/fvwm/menuitem.c b/fvwm/menuitem.c
-index 3e4ea2c..23d0102 100644
+index 3e4ea2c..de1e7ef 100644
 --- a/fvwm/menuitem.c
 +++ b/fvwm/menuitem.c
 @@ -82,10 +82,14 @@ static void clear_menu_item_background(
@@ -70,7 +70,7 @@ index 3e4ea2c..23d0102 100644
  	 */
  
 +	do_flat_separators = ST_DO_FLAT_SEPARATOR(ms);
-+	
++
  	/* Calculate the separator offsets. */
  	if (ST_HAS_LONG_SEPARATORS(ms))
  	{
@@ -110,10 +110,10 @@ index 3e4ea2c..23d0102 100644
  			break;
  		default:
 diff --git a/fvwm/menus.c b/fvwm/menus.c
-index b73ed50..189b8f2 100644
+index 6772dee..96fcfad 100644
 --- a/fvwm/menus.c
 +++ b/fvwm/menus.c
-@@ -1662,6 +1662,10 @@ static Bool size_menu_vertically(MenuSizingParameters *msp)
+@@ -1658,6 +1658,10 @@ static Bool size_menu_vertically(MenuSizingParameters *msp)
  		separator_height = (last_item_has_relief) ?
  			MENU_SEPARATOR_HEIGHT + relief_thickness :
  			MENU_SEPARATOR_TOTAL_HEIGHT;
@@ -125,18 +125,19 @@ index b73ed50..189b8f2 100644
  		if (MI_IS_TITLE(mi))
  		{
 diff --git a/fvwm/menustyle.c b/fvwm/menustyle.c
-index ea775a5..51b06c1 100644
+index 88e2f9a..8ec99f7 100644
 --- a/fvwm/menustyle.c
 +++ b/fvwm/menustyle.c
-@@ -433,6 +433,7 @@ static int menustyle_get_styleopt_index(char *option)
+@@ -431,7 +431,7 @@ static int menustyle_get_styleopt_index(char *option)
+ 		"TrianglesUseFore",
+ 		"TitleColorset", "HilightTitleBack",
  		"TitleFont",
- 		"VerticalMargins",
+-		"VerticalMargins",
++		"VerticalMargins", "FlatSeparators",
  		"UniqueHotkeyActivatesImmediate",
-+		"FlatSeparators",
  		NULL
  	};
- 
-@@ -901,6 +902,7 @@ MenuStyle *menustyle_parse_style(F_CMD_ARGS)
+@@ -901,6 +901,7 @@ MenuStyle *menustyle_parse_style(F_CMD_ARGS)
  			ST_SCROLL_OFF_PAGE(tmpms) = 1;
  			ST_DO_HILIGHT_TITLE_BACK(tmpms) = 0;
  			ST_USING_DEFAULT_TITLEFONT(tmpms) = True;
@@ -144,7 +145,7 @@ index ea775a5..51b06c1 100644
  			has_gc_changed = True;
  			option = "fvwm";
  		}
-@@ -1606,6 +1608,9 @@ MenuStyle *menustyle_parse_style(F_CMD_ARGS)
+@@ -1606,6 +1607,9 @@ MenuStyle *menustyle_parse_style(F_CMD_ARGS)
  		case 63: /* UniqueHotKeyActivatesImmediate */
  			ST_HOTKEY_ACTIVATES_IMMEDIATE(tmpms) = on;
  			break;
@@ -154,7 +155,7 @@ index ea775a5..51b06c1 100644
  
  #if 0
  		case 99: /* PositionHints */
-@@ -1864,6 +1869,8 @@ void menustyle_copy(MenuStyle *origms, MenuStyle *destms)
+@@ -1864,6 +1868,8 @@ void menustyle_copy(MenuStyle *origms, MenuStyle *destms)
  	ST_TRIANGLES_USE_FORE(destms) = ST_TRIANGLES_USE_FORE(origms);
  	/* Title */
  	ST_DO_HILIGHT_TITLE_BACK(destms) = ST_DO_HILIGHT_TITLE_BACK(origms);
@@ -185,5 +186,5 @@ index fa97555..34dc524 100644
  	unsigned char ReliefThickness;
  	unsigned char TitleUnderlines;
 -- 
-1.7.10.4
+2.0.5
 

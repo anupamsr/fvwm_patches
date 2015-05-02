@@ -1,19 +1,19 @@
-From d7233522476f014acd7bc5fef12386836dcf4528 Mon Sep 17 00:00:00 2001
+From 3a49f8319eb8fb507e5ce18212091a4bdd0592e8 Mon Sep 17 00:00:00 2001
 From: Anupam Srivastava <ansrivastava@corp.ebay.com>
-Date: Fri, 3 Aug 2012 18:19:12 +0530
+Date: Sat, 2 May 2015 13:58:29 +0530
 Subject: [PATCH 10/15] Multi Border
 
 ---
- fvwm/borders.c   |  163 +++++++++++++++++++++++++++++++++++++++++++++++++-----
- fvwm/builtins.c  |   61 ++++++++++++++++++++
- fvwm/menus.c     |   70 +++++++++++++++++++----
- fvwm/menustyle.c |   54 ++++++++++++++++++
- fvwm/menustyle.h |    4 ++
- fvwm/screen.h    |    4 ++
- 6 files changed, 330 insertions(+), 26 deletions(-)
+ fvwm/borders.c   | 146 ++++++++++++++++++++++++++++++++++++++++++++++++++++---
+ fvwm/builtins.c  |  61 +++++++++++++++++++++++
+ fvwm/menus.c     |  70 +++++++++++++++++++++-----
+ fvwm/menustyle.c |  54 ++++++++++++++++++++
+ fvwm/menustyle.h |   4 ++
+ fvwm/screen.h    |   4 ++
+ 6 files changed, 321 insertions(+), 18 deletions(-)
 
 diff --git a/fvwm/borders.c b/fvwm/borders.c
-index 60dd448..38685b1 100644
+index 846502d..cd86ffe 100644
 --- a/fvwm/borders.c
 +++ b/fvwm/borders.c
 @@ -1647,6 +1647,7 @@ static void border_fill_pixmap_background(
@@ -24,7 +24,7 @@ index 60dd448..38685b1 100644
  	if (!bg->flags.use_pixmap)
  	{
  		/* solid pixel */
-@@ -1839,13 +1840,26 @@ static void border_get_frame_pixmap(
+@@ -1837,13 +1838,26 @@ static void border_get_frame_pixmap(
  
  static void border_get_border_background(
  	pixmap_background_type *bg, common_decorations_type *cd,
@@ -53,7 +53,7 @@ index 60dd448..38685b1 100644
  		bg->pixmap.p = cd->texture_pixmap;
  		bg->pixmap.g.width = cd->texture_pixmap_width;
  		bg->pixmap.g.height = cd->texture_pixmap_height;
-@@ -1940,6 +1954,18 @@ static void border_get_border_background(
+@@ -1938,6 +1952,18 @@ static void border_get_border_background(
  	return;
  }
  
@@ -72,7 +72,7 @@ index 60dd448..38685b1 100644
  static void border_draw_one_border_part(
  	common_decorations_type *cd, FvwmWindow *fw, rectangle *sidebar_g,
  	rectangle *frame_g, border_relief_descr *br, window_parts part,
-@@ -1952,6 +1978,7 @@ static void border_draw_one_border_part(
+@@ -1950,6 +1976,7 @@ static void border_draw_one_border_part(
  	Pixmap p;
  	Window w;
  	Bool free_bg_pixmap = False;
@@ -80,65 +80,58 @@ index 60dd448..38685b1 100644
  
  	/* make a pixmap */
  	border_get_part_geometry(fw, part, sidebar_g, &part_g, &w);
-@@ -1965,8 +1992,28 @@ static void border_draw_one_border_part(
+@@ -1963,8 +1990,28 @@ static void border_draw_one_border_part(
  	relative_g.height = fw->g.frame.height;
  	relative_g.x = part_g.x;
  	relative_g.y = part_g.y;
 -	border_get_border_background(
 -		&bg, cd, &part_g, &relative_g, &free_bg_pixmap, w, part);
 +
-+    DecorFace* df;
-+    FvwmPicture* fp = 0;
-+    df = border_get_border_style(fw, (Scr.Hilite == fw));
-+    if (DFS_FACE_TYPE(df->style) == MultiBorder)
-+    {
-+        int id = -1;
-+        if (part==PART_BORDER_NW) id = 0;
-+        if (part==PART_BORDER_N)  id = 1;
-+        if (part==PART_BORDER_NE) id = 2;
-+        if (part==PART_BORDER_E)  id = 3;
-+        if (part==PART_BORDER_SE) id = 4;
-+        if (part==PART_BORDER_S)  id = 5;
-+        if (part==PART_BORDER_SW) id = 6;
-+        if (part==PART_BORDER_W)  id = 7;
++	DecorFace* df;
++	FvwmPicture* fp = 0;
++	df = border_get_border_style(fw, (Scr.Hilite == fw));
++	if (DFS_FACE_TYPE(df->style) == MultiBorder)
++	{
++		int id = -1;
++		if (part==PART_BORDER_NW) id = 0;
++		if (part==PART_BORDER_N)  id = 1;
++		if (part==PART_BORDER_NE) id = 2;
++		if (part==PART_BORDER_E)  id = 3;
++		if (part==PART_BORDER_SE) id = 4;
++		if (part==PART_BORDER_S)  id = 5;
++		if (part==PART_BORDER_SW) id = 6;
++		if (part==PART_BORDER_W)  id = 7;
 +
-+        if (id>=0 && df->u.mb.pixmaps[id])
-+        {
-+            fp = df->u.mb.pixmaps[id];
-+        }
-+    }
++		if (id>=0 && df->u.mb.pixmaps[id])
++		{
++			fp = df->u.mb.pixmaps[id];
++		}
++	}
 +
  	if (cd->texture_pixmap)
  	{
  		switch (part)
-@@ -2009,13 +2056,100 @@ static void border_draw_one_border_part(
+@@ -2007,13 +2054,100 @@ static void border_draw_one_border_part(
  		bg.pixmap.g.x = 0;
  		bg.pixmap.g.y = 0;
  	}
--	/* set the geometry for drawing the Tiled pixmap; maybe add the relief
--	 * as offset? */
--	pix_g.x = 0;
--	pix_g.y = 0;
--	pix_g.width = part_g.width;
--	pix_g.height = part_g.height;
--	border_fill_pixmap_background(p, &pix_g, &bg, cd);
 +
 +	border_get_border_background(
 +		&bg, cd, &part_g, &relative_g, &free_bg_pixmap, w, PART_NONE, fp);
-+ 
++
 +	int px = bg.pixmap.g.x;
 +	int py = bg.pixmap.g.y;
-+ 
-+    if (fp)
-+    {
++
++	if (fp)
++	{
 +		/* Position pixmap so that it's aligned to the edge of the window */
 +		if (part & PART_BOTTOM)
 +		{
-+             bg.pixmap.g.y = fp->height - sidebar_g->y;
-+			 if (part == PART_BORDER_S)
-+			 {
++			bg.pixmap.g.y = fp->height - sidebar_g->y;
++			if (part == PART_BORDER_S)
++			{
 +				bg.pixmap.g.y = fp->height - fw->boundary_width;
-+			 }
++			}
 +		}
 +		if (part & PART_RIGHT)
 +		{
@@ -148,52 +141,52 @@ index 60dd448..38685b1 100644
 +				bg.pixmap.g.x = fp->width - fw->boundary_width;
 +			}
 +		}
-+    }
-+ 
-+   	/* set the geometry for drawing the Tiled pixmap; maybe add the relief
-+   	 * as offset? */
-+   	pix_g.x = 0;
-+   	pix_g.y = 0;
-+   	pix_g.width = part_g.width;
-+   	pix_g.height = part_g.height;
-+ 
-+   	border_fill_pixmap_background(p, &pix_g, &bg, cd);
-+ 
-+    bg.pixmap.g.x = px;
-+    bg.pixmap.g.y = py;
++	}
 +
-+    if (fp)
-+    {
+ 	/* set the geometry for drawing the Tiled pixmap; maybe add the relief
+ 	 * as offset? */
+ 	pix_g.x = 0;
+ 	pix_g.y = 0;
+ 	pix_g.width = part_g.width;
+ 	pix_g.height = part_g.height;
++
+ 	border_fill_pixmap_background(p, &pix_g, &bg, cd);
++
++	bg.pixmap.g.x = px;
++	bg.pixmap.g.y = py;
++
++	if (fp)
++	{
 +		height = pix_g.height;
 +		width = pix_g.width;
 +		x = pix_g.x;
 +		y = pix_g.y;
 +
-+ 		/* draw parts from other borders that overflow because of their width/height */
-+        rectangle r;
-+        if (part==PART_BORDER_S)
-+        {
++		/* draw parts from other borders that overflow because of their width/height */
++		rectangle r;
++		if (part==PART_BORDER_S)
++		{
 +			DRAWBORDER(6, pix_g.x - sidebar_g->x, fw->boundary_width - fp->height, fp->width - sidebar_g->x, height);
-+            DRAWBORDER(4, pix_g.width - fp->width + sidebar_g->x, fw->boundary_width - fp->height, fp->width - sidebar_g->x, height);
++			DRAWBORDER(4, pix_g.width - fp->width + sidebar_g->x, fw->boundary_width - fp->height, fp->width - sidebar_g->x, height);
 +		}
 +		if (!IS_SHADED(fw))
 +		{
 +			if (part==PART_BORDER_E)
 +			{
-+			    DRAWBORDER(2, fw->boundary_width - fp->width, pix_g.y - sidebar_g->y, width, fp->height - sidebar_g->y);
-+			    DRAWBORDER(4, fw->boundary_width - fp->width, pix_g.height - fp->height + sidebar_g->y, width, fp->height - sidebar_g->y);
++				DRAWBORDER(2, fw->boundary_width - fp->width, pix_g.y - sidebar_g->y, width, fp->height - sidebar_g->y);
++				DRAWBORDER(4, fw->boundary_width - fp->width, pix_g.height - fp->height + sidebar_g->y, width, fp->height - sidebar_g->y);
 +			}
 +			if (part==PART_BORDER_W)
 +			{
-+			    DRAWBORDER(0, x, pix_g.y - sidebar_g->y, width, fp->height - sidebar_g->y);
-+			    DRAWBORDER(6, x, pix_g.height - fp->height + sidebar_g->y, width, fp->height - sidebar_g->y);
++				DRAWBORDER(0, x, pix_g.y - sidebar_g->y, width, fp->height - sidebar_g->y);
++				DRAWBORDER(6, x, pix_g.height - fp->height + sidebar_g->y, width, fp->height - sidebar_g->y);
 +			}
 +		}
-+        if (part==PART_BORDER_N)
-+        {
++		if (part==PART_BORDER_N)
++		{
 +			DRAWBORDER(2, pix_g.width - fp->width + sidebar_g->x, y, fp->width - sidebar_g->x, height);
-+            DRAWBORDER(0, pix_g.x - fp->width + sidebar_g->x, y, fp->width - sidebar_g->x, height);
-+        }
++			DRAWBORDER(0, pix_g.x - fp->width + sidebar_g->x, y, fp->width - sidebar_g->x, height);
++		}
 +		/* Use the top border for the whole height of the titlebar, overflowing to parts of the bottom corners if shaded */
 +		if (IS_SHADED(fw))
 +		{
@@ -214,29 +207,12 @@ index 60dd448..38685b1 100644
 +				DRAWBORDER(2, width - fp->width, -height*2, width, height - fw->boundary_width);
 +			}
 +		}
-+     }
-+ 
++	}
++
  	if (HAS_FLUXBOX_HANDLES(fw) && (part & PART_BOTTOM))
  	{
  		pix_g.y = part_g.height - fw->boundary_width;
-@@ -2032,6 +2166,7 @@ static void border_draw_one_border_part(
- 			border_fill_fluxbox_handle(p, &pix_g, cd, !(part & PART_BORDER_S));
- 		}
- 	}
-+
- 	if (free_bg_pixmap && bg.pixmap.p)
- 	{
- 		XFreePixmap(dpy, bg.pixmap.p);
-@@ -2086,7 +2221,7 @@ static void border_draw_all_border_parts(
-                                         do_clear);
- 		}
- 	}
--
-+	
- 	return;
- }
- 
-@@ -3711,7 +3846,7 @@ static void border_set_button_pixmap(
+@@ -3709,7 +3843,7 @@ static void border_set_button_pixmap(
  		relative_g.x = button_g->x;
  		relative_g.y = button_g->y;
  		border_get_border_background(
@@ -245,7 +221,7 @@ index 60dd448..38685b1 100644
  		bg.pixmap.g.x = 0;
  		bg.pixmap.g.y = 0;
  		/* set the geometry for drawing the Tiled pixmap;
-@@ -4158,7 +4293,7 @@ static void border_set_title_pixmap(
+@@ -4156,7 +4290,7 @@ static void border_set_title_pixmap(
  		relative_g.y = td->layout.title_g.y;
  		border_get_border_background(
  			&bg, td->cd, &td->layout.title_g, &relative_g,
@@ -255,7 +231,7 @@ index 60dd448..38685b1 100644
  		bg.pixmap.g.y = 0;
  		/* set the geometry for drawing the Tiled pixmap;
 diff --git a/fvwm/builtins.c b/fvwm/builtins.c
-index fd1333d..5b0d34c 100644
+index d26b122..b5fdb4f 100644
 --- a/fvwm/builtins.c
 +++ b/fvwm/builtins.c
 @@ -795,6 +795,50 @@ static char *ReadMultiPixmapDecor(char *s, DecorFace *df)
@@ -269,10 +245,10 @@ index fd1333d..5b0d34c 100644
 +	char *token;
 +	int x;
 +	int y;
-+	
++
 +	pm = df->u.mb.pixmaps;
 +	df->style.face_type = MultiBorder;
-+	
++
 +	for (x = 0; x < 8; x++)
 +	{
 +		s = DoPeekToken(s, &token, " ", NULL, NULL);
@@ -286,7 +262,7 @@ index fd1333d..5b0d34c 100644
 +		}
 +		pm[x] = PCacheFvwmPicture(dpy, Scr.NoFocusWin, NULL,
 +			token, fpa);
-+		
++
 +		if (!pm[x])
 +		{
 +			fvwm_msg(ERR, "ReadMultiBorderDecor",
@@ -341,10 +317,10 @@ index fd1333d..5b0d34c 100644
  			 strncasecmp (style, "MiniIcon", 8) == 0)
  		{
 diff --git a/fvwm/menus.c b/fvwm/menus.c
-index a0616df..b523835 100644
+index a80023c..06f6fb0 100644
 --- a/fvwm/menus.c
 +++ b/fvwm/menus.c
-@@ -2639,6 +2639,41 @@ static Bool paint_menu_gradient_background(
+@@ -2635,6 +2635,41 @@ static Bool paint_menu_gradient_background(
  	return do_clear;
  }
  
@@ -386,7 +362,7 @@ index a0616df..b523835 100644
  static Bool paint_menu_pixmap_background(
  	MenuRoot *mr, XEvent *pevent)
  {
-@@ -2741,15 +2776,20 @@ static void paint_menu(
+@@ -2737,15 +2772,20 @@ static void paint_menu(
  	{
  		/* Only the border was obscured. Redraw it centrally instead of
  		 * redrawing several menu items. */
@@ -414,7 +390,7 @@ index a0616df..b523835 100644
  	}
  	MR_IS_PAINTED(mr) = 1;
  	/* paint the menu background */
-@@ -2814,6 +2854,9 @@ static void paint_menu(
+@@ -2810,6 +2850,9 @@ static void paint_menu(
  		case PixmapMenu:
  			do_clear = paint_menu_pixmap_background(mr, pevent);
  			break;
@@ -424,7 +400,7 @@ index a0616df..b523835 100644
  		case TiledPixmapMenu:
  			XSetWindowBackgroundPixmap(
  				dpy, MR_WINDOW(mr), ST_FACE(ms).u.p->picture);
-@@ -2826,11 +2869,14 @@ static void paint_menu(
+@@ -2822,11 +2865,14 @@ static void paint_menu(
  		}
  	} /* if (ms) */
  	/* draw the relief */
@@ -436,16 +412,16 @@ index a0616df..b523835 100644
 +	if (!(ms && ST_FACE(ms).type == MultiPixmapMenu))
 +	{
 +		RelieveRectangle(dpy, MR_WINDOW(mr), 0, 0, MR_WIDTH(mr) - 1,
-+				 MR_HEIGHT(mr) - 1, (Pdepth < 2) ?
-+				 SHADOW_GC(MST_MENU_INACTIVE_GCS(mr)) :
-+				 HILIGHT_GC(MST_MENU_INACTIVE_GCS(mr)),
-+				 SHADOW_GC(MST_MENU_INACTIVE_GCS(mr)), bw);
++			MR_HEIGHT(mr) - 1, (Pdepth < 2) ?
++			SHADOW_GC(MST_MENU_INACTIVE_GCS(mr)) :
++			HILIGHT_GC(MST_MENU_INACTIVE_GCS(mr)),
++			SHADOW_GC(MST_MENU_INACTIVE_GCS(mr)), bw);
 +	}
  	/* paint the menu items */
  	for (mi = MR_FIRST_ITEM(mr); mi != NULL; mi = MI_NEXT_ITEM(mi))
  	{
 diff --git a/fvwm/menustyle.c b/fvwm/menustyle.c
-index 2a80c18..5ee6e5e 100644
+index b4989e7..008abc0 100644
 --- a/fvwm/menustyle.c
 +++ b/fvwm/menustyle.c
 @@ -160,6 +160,8 @@ static Boolean menustyle_parse_face(char *s, MenuFace *mf, int verbose)
@@ -539,7 +515,7 @@ index 8284a33..8dc3b15 100644
  		Pixel back;
  		struct
 diff --git a/fvwm/screen.h b/fvwm/screen.h
-index 16f57bc..9699cbc 100644
+index ab14d1b..e309268 100644
 --- a/fvwm/screen.h
 +++ b/fvwm/screen.h
 @@ -99,6 +99,7 @@ typedef enum
@@ -561,5 +537,5 @@ index 16f57bc..9699cbc 100644
  		{
  			int cs;
 -- 
-1.7.10.4
+2.0.5
 

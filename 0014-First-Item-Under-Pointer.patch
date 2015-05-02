@@ -1,17 +1,17 @@
-From f3b57d888fababc8729ad2cbbb400003073c88cd Mon Sep 17 00:00:00 2001
+From 9eb428ea5147190da44c536bb30b2ecc3246b28a Mon Sep 17 00:00:00 2001
 From: Anupam Srivastava <ansrivastava@corp.ebay.com>
-Date: Fri, 3 Aug 2012 18:20:02 +0530
+Date: Sat, 2 May 2015 14:43:14 +0530
 Subject: [PATCH 14/15] First Item Under Pointer
 
 ---
- fvwm/menus.c |    7 +++++++
+ fvwm/menus.c | 7 +++++++
  1 file changed, 7 insertions(+)
 
 diff --git a/fvwm/menus.c b/fvwm/menus.c
-index b523835..5d8ef7c 100644
+index 06f6fb0..2285ed2 100644
 --- a/fvwm/menus.c
 +++ b/fvwm/menus.c
-@@ -3352,6 +3352,13 @@ static int pop_menu_up(
+@@ -3350,6 +3350,13 @@ static int pop_menu_up(
  	}
  	context = (*pexc)->w.wcontext;
  
@@ -26,5 +26,5 @@ index b523835..5d8ef7c 100644
  	 * Create a new menu instance (if necessary)
  	 */
 -- 
-1.7.10.4
+2.0.5
 

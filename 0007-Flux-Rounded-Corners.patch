@@ -1,29 +1,29 @@
-From 3f0a82b6471892c8a03e82f9897d204b0468ae6a Mon Sep 17 00:00:00 2001
+From f435f69bf1f7da6c7285a32c8c920bd25eb25ac3 Mon Sep 17 00:00:00 2001
 From: Anupam Srivastava <ansrivastava@corp.ebay.com>
-Date: Wed, 14 Nov 2012 16:24:16 +0530
+Date: Sat, 2 May 2015 15:34:46 +0530
 Subject: [PATCH 07/15] Flux Rounded Corners
 
 ---
- fvwm/add_window.c   |    7 ++
- fvwm/borders.c      |   66 +++++++++++++---
- fvwm/frame.c        |  207 +++++++++++++++++++++++++++++++++++++++++++++++++++
- fvwm/frame.h        |    4 +
- fvwm/fvwm.h         |    6 ++
- fvwm/geometry.c     |   20 +++--
- fvwm/menus.c        |   10 +++
- fvwm/menustyle.c    |    7 ++
- fvwm/menustyle.h    |    6 ++
- fvwm/style.c        |   97 ++++++++++++++++++++++++
- fvwm/style.h        |   22 ++++++
- fvwm/window_flags.h |   36 +++++++--
- fvwm/windowshade.c  |    1 +
- 13 files changed, 466 insertions(+), 23 deletions(-)
+ fvwm/add_window.c   |   7 ++
+ fvwm/borders.c      |  66 ++++++++++++++---
+ fvwm/frame.c        | 207 ++++++++++++++++++++++++++++++++++++++++++++++++++++
+ fvwm/frame.h        |   4 +
+ fvwm/fvwm.h         |   6 ++
+ fvwm/geometry.c     |  21 ++++--
+ fvwm/menus.c        |  10 +++
+ fvwm/menustyle.c    |   7 ++
+ fvwm/menustyle.h    |   6 ++
+ fvwm/style.c        |  97 ++++++++++++++++++++++++
+ fvwm/style.h        |  22 ++++++
+ fvwm/window_flags.h |  36 +++++++--
+ fvwm/windowshade.c  |   1 +
+ 13 files changed, 466 insertions(+), 24 deletions(-)
 
 diff --git a/fvwm/add_window.c b/fvwm/add_window.c
-index 5e7a246..3876e45 100644
+index 8ba0305..05dc21f 100644
 --- a/fvwm/add_window.c
 +++ b/fvwm/add_window.c
-@@ -1766,6 +1766,7 @@ void setup_title_geometry(
+@@ -1842,6 +1842,7 @@ void setup_title_geometry(
  {
  	int width;
  	int offset;
@@ -31,7 +31,7 @@ index 5e7a246..3876e45 100644
  
  	get_title_font_size_and_offset(
  		fw, S_TITLE_DIR(SCF(*pstyle)),
-@@ -1777,6 +1778,10 @@ void setup_title_geometry(
+@@ -1853,6 +1854,10 @@ void setup_title_geometry(
  	fw->title_thickness = width;
  	fw->title_text_offset = offset;
  	fw->corner_width = fw->title_thickness + fw->boundary_width;
@@ -42,7 +42,7 @@ index 5e7a246..3876e45 100644
  	if (!HAS_TITLE(fw))
  	{
  		fw->title_thickness = 0;
-@@ -2714,6 +2719,8 @@ FvwmWindow *AddWindow(
+@@ -2790,6 +2795,8 @@ FvwmWindow *AddWindow(
  		fw = NULL;
  	}
  
@@ -52,10 +52,10 @@ index 5e7a246..3876e45 100644
  }
  
 diff --git a/fvwm/borders.c b/fvwm/borders.c
-index eefcf5d..60dd448 100644
+index d35f21b..846502d 100644
 --- a/fvwm/borders.c
 +++ b/fvwm/borders.c
-@@ -1754,6 +1754,24 @@ static void border_fill_pixmap_background(
+@@ -1752,6 +1752,24 @@ static void border_fill_pixmap_background(
  	return;
  }
  
@@ -80,7 +80,7 @@ index eefcf5d..60dd448 100644
  /* create a root transparent colorset bg, we take in account a possible
   * drawing rotation */
  static Pixmap border_create_root_transparent_pixmap(
-@@ -1998,12 +2016,28 @@ static void border_draw_one_border_part(
+@@ -1996,12 +2014,28 @@ static void border_draw_one_border_part(
  	pix_g.width = part_g.width;
  	pix_g.height = part_g.height;
  	border_fill_pixmap_background(p, &pix_g, &bg, cd);
@@ -110,7 +110,7 @@ index eefcf5d..60dd448 100644
  	{
  		border_draw_part_relief(br, frame_g, &part_g, p, is_inverted);
  		/* draw the handle marks */
-@@ -4523,6 +4557,9 @@ static window_parts border_get_titlebar_descr(
+@@ -4521,6 +4555,9 @@ static window_parts border_get_titlebar_descr(
  	JustificationType just;
  	int lbl = 0;
  	int rbl = 0;
@@ -120,7 +120,7 @@ index eefcf5d..60dd448 100644
  
  	ret_td->cd = cd;
  	ret_td->frame_g = *new_g;
-@@ -4560,16 +4597,16 @@ static window_parts border_get_titlebar_descr(
+@@ -4558,16 +4595,16 @@ static window_parts border_get_titlebar_descr(
  	/* geometry of the title bar title + buttons */
  	if (!ret_td->has_vt)
  	{
@@ -141,7 +141,7 @@ index eefcf5d..60dd448 100644
  		ret_td->bar_g.x = ret_td->layout.title_g.x;
  	}
  
-@@ -4621,7 +4658,7 @@ static window_parts border_get_titlebar_descr(
+@@ -4619,7 +4656,7 @@ static window_parts border_get_titlebar_descr(
  		{
  			ret_td->left_buttons_g.height = rbl;
  			ret_td->right_buttons_g.height = lbl;
@@ -150,7 +150,7 @@ index eefcf5d..60dd448 100644
  			ret_td->right_buttons_g.x = ret_td->bar_g.x;
  			ret_td->left_buttons_g.y = ret_td->layout.title_g.y +
  				ret_td->layout.title_g.height;
-@@ -4631,7 +4668,7 @@ static window_parts border_get_titlebar_descr(
+@@ -4629,7 +4666,7 @@ static window_parts border_get_titlebar_descr(
  		{
  			ret_td->left_buttons_g.width = rbl;
  			ret_td->right_buttons_g.width = lbl;
@@ -159,7 +159,7 @@ index eefcf5d..60dd448 100644
  			ret_td->right_buttons_g.y = ret_td->bar_g.y;
  			ret_td->left_buttons_g.x = ret_td->layout.title_g.x +
  				ret_td->layout.title_g.width;
-@@ -4644,7 +4681,7 @@ static window_parts border_get_titlebar_descr(
+@@ -4642,7 +4679,7 @@ static window_parts border_get_titlebar_descr(
  		{
  			ret_td->left_buttons_g.height = lbl;
  			ret_td->right_buttons_g.height = rbl;
@@ -168,7 +168,7 @@ index eefcf5d..60dd448 100644
  			ret_td->left_buttons_g.x = ret_td->bar_g.x;
  			ret_td->right_buttons_g.y = ret_td->layout.title_g.y +
  				ret_td->layout.title_g.height;
-@@ -4654,7 +4691,7 @@ static window_parts border_get_titlebar_descr(
+@@ -4652,7 +4689,7 @@ static window_parts border_get_titlebar_descr(
  		{
  			ret_td->left_buttons_g.width = lbl;
  			ret_td->right_buttons_g.width = rbl;
@@ -177,7 +177,7 @@ index eefcf5d..60dd448 100644
  			ret_td->left_buttons_g.y = ret_td->bar_g.y;
  			ret_td->right_buttons_g.x = ret_td->layout.title_g.x +
  				ret_td->layout.title_g.width;
-@@ -4997,7 +5034,7 @@ void border_get_part_geometry(
+@@ -4995,7 +5032,7 @@ void border_get_part_geometry(
  	int bw;
  	Bool title;
  
@@ -186,7 +186,7 @@ index eefcf5d..60dd448 100644
  	/* ret_g->x and ret->y is just an offset relatively to the w,
  	 * maybe we can take the relief in account? */
  	switch (part)
-@@ -5015,6 +5052,10 @@ void border_get_part_geometry(
+@@ -5013,6 +5050,10 @@ void border_get_part_geometry(
  	case PART_BORDER_S:
  		ret_g->x = sidebar_g->x;
  		ret_g->y = 2 * sidebar_g->y + sidebar_g->height - bw;
@@ -197,7 +197,7 @@ index eefcf5d..60dd448 100644
  		*ret_w = FW_W_SIDE(fw, 2);
  		break;
  	case PART_BORDER_W:
-@@ -5049,9 +5090,14 @@ void border_get_part_geometry(
+@@ -5047,9 +5088,14 @@ void border_get_part_geometry(
  	switch (part)
  	{
  	case PART_BORDER_N:
@@ -213,19 +213,19 @@ index eefcf5d..60dd448 100644
  	case PART_BORDER_E:
  	case PART_BORDER_W:
 diff --git a/fvwm/frame.c b/fvwm/frame.c
-index 55922ce..b25d588 100644
+index 10cf3a6..acfdaaa 100644
 --- a/fvwm/frame.c
 +++ b/fvwm/frame.c
-@@ -436,6 +436,8 @@ static void __frame_setup_window(
- 	/* inform the modules of the change */
- 	BroadcastConfig(M_CONFIGURE_WINDOW,fw);
+@@ -440,6 +440,8 @@ static void __frame_setup_window(
+ 		BroadcastConfig(M_CONFIGURE_WINDOW,fw);
+ 	}
  
 +	frame_make_rounded_corners(fw);
 +
  	return;
  }
  
-@@ -1954,6 +1956,7 @@ void frame_free_move_resize_args(
+@@ -1958,6 +1960,7 @@ void frame_free_move_resize_args(
  			FShapeSet);
  	}
  	frame_setup_shape(fw, mra->end_g.width, mra->end_g.height, fw->wShaped);
@@ -233,7 +233,7 @@ index 55922ce..b25d588 100644
  	if (mra->flags.do_restore_gravity)
  	{
  		/* TA:  2011-09-04: There might be a chance some clients with
-@@ -2087,6 +2090,210 @@ void frame_force_setup_window(
+@@ -2091,6 +2094,210 @@ void frame_force_setup_window(
  	return;
  }
  
@@ -241,7 +241,7 @@ index 55922ce..b25d588 100644
 +{
 +	Pixmap pm;
 +	GC gc;
-+    rectangle rect;
++	rectangle rect;
 +	int w,h;
 +	unsigned long valuemask;
 +	int x;
@@ -262,9 +262,9 @@ index 55922ce..b25d588 100644
 +		lend = 6;
 +	}
 +
-+    XGetGeometry(
-+        dpy, win, &JunkRoot, &rect.x, &rect.y,
-+        &rect.width, &rect.height, &JunkBW, &JunkDepth);
++	XGetGeometry(
++		dpy, win, &JunkRoot, &rect.x, &rect.y,
++		&rect.width, &rect.height, &JunkBW, &JunkDepth);
 +
 +	w = rect.width;
 +	h = rect.height;
@@ -277,20 +277,20 @@ index 55922ce..b25d588 100644
 +	/* Draw a rounded shape on the corners of the pixmap */
 +	for (x = lstart; x < lend; x++)
 +	{
-+ 		if (draw_parts & PART_BORDER_NW)
-+ 		{
++		if (draw_parts & PART_BORDER_NW)
++		{
 +			XFillRectangle(dpy, pm, gc, 0, l0[x], l2[x], l3[x]);
-+ 		}
-+ 		if (draw_parts & PART_BORDER_NE)
-+ 		{
++		}
++		if (draw_parts & PART_BORDER_NE)
++		{
 +			XFillRectangle(dpy, pm, gc, w-l2[x], l0[x], l2[x], l3[x]);
 +		}
-+  		if (draw_parts & PART_BORDER_SW)
-+ 		{
++		if (draw_parts & PART_BORDER_SW)
++		{
 +			XFillRectangle(dpy, pm, gc, 0, h-l1[x], l2[x], l3[x]);
 +		}
-+ 		if (draw_parts & PART_BORDER_SE)
-+ 		{
++		if (draw_parts & PART_BORDER_SE)
++		{
 +			XFillRectangle(dpy, pm, gc, w-l2[x], h-l1[x], l2[x], l3[x]);
 +		}
 +	}
@@ -311,7 +311,7 @@ index 55922ce..b25d588 100644
 +static window_parts __get_corner(window_parts corner, FvwmWindow *fw)
 +{
 +	int dir;
-+		
++
 +	dir = GET_TITLE_DIR(fw);
 +
 +	/* Flip horizontally (relative to tb) if the titlebar is rotated */
@@ -332,13 +332,13 @@ index 55922ce..b25d588 100644
 +	{
 +		corner = corner >> 4;
 +	}
-+	
++
 +	/* Swap SE/SW back */
 +	SWAP_CORNER(PART_BORDER_SW | PART_BORDER_SE);
 +
 +	return corner;
 +}
-+ 
++
 +void frame_make_rounded_corners(FvwmWindow *fw)
 +{
 +	rectangle rect;
@@ -352,12 +352,12 @@ index 55922ce..b25d588 100644
 +	{
 +		return;
 +	}
-+  
++
 +	window_parts corner_nw = __get_corner(PART_BORDER_NW, fw);
 +	window_parts corner_ne = __get_corner(PART_BORDER_NE, fw);
 +	window_parts corner_se = __get_corner(PART_BORDER_SE, fw);
 +	window_parts corner_sw = __get_corner(PART_BORDER_SW, fw);
-+ 
++
 +	for (x = 9;x>=0;x--)
 +	{
 +		if (FW_W_BUTTON(fw, x) != None)
@@ -372,21 +372,21 @@ index 55922ce..b25d588 100644
 +			}
 +		}
 +	}
-+ 
-+ 	mask = 0;
-+ 	if (HAS_ROUNDED_CORNERS_TOP(fw))
-+  	{
-+ 		mask |= corner_ne | corner_nw;
-+  	}
-+ 	if (HAS_ROUNDED_CORNERS_BOTTOM(fw))
-+  	{
-+ 		mask |= corner_se | corner_sw;
-+  	}
-+ 
++
++	mask = 0;
++	if (HAS_ROUNDED_CORNERS_TOP(fw))
++	{
++		mask |= corner_ne | corner_nw;
++	}
++	if (HAS_ROUNDED_CORNERS_BOTTOM(fw))
++	{
++		mask |= corner_se | corner_sw;
++	}
++
 +	/* Draw mask on each corner of the window. This involves the frame, title,
 +	 * buttons and parent wins depending on the window configuration */
-+ 	rect = fw->g.frame;
-+ 	frame_draw_rounded_mask(fw, FW_W_FRAME(fw), mask, 1);
++	rect = fw->g.frame;
++	frame_draw_rounded_mask(fw, FW_W_FRAME(fw), mask, 1);
 +	if (HAS_TITLE(fw))
 +	{
 +		draw_parts = 0;
@@ -418,11 +418,11 @@ index 55922ce..b25d588 100644
 +			}
 +		}
 +		frame_draw_rounded_mask(fw, FW_W_TITLE(fw), mask & draw_parts, 0);
-+  
++
 +		if (!IS_SHADED(fw))
 +		{
 +			frame_draw_rounded_mask(fw, FW_W_PARENT(fw), mask & (corner_sw|corner_se), 0);
-+  
++
 +			if (left_button)
 +			{
 +				frame_draw_rounded_mask(fw, left_button, mask & corner_nw, 0);
@@ -437,7 +437,7 @@ index 55922ce..b25d588 100644
 +	{
 +		frame_draw_rounded_mask(fw, FW_W_PARENT(fw), mask & PART_CORNERS, 0);
 +	}
-+  
++
 +	XFlush(dpy);
 +}
 +
@@ -466,7 +466,7 @@ index ab425df..c374faa 100644
  
  #endif /* FRAME_H */
 diff --git a/fvwm/fvwm.h b/fvwm/fvwm.h
-index 7738772..e106af9 100644
+index 425a49c..c24390e 100644
 --- a/fvwm/fvwm.h
 +++ b/fvwm/fvwm.h
 @@ -273,6 +273,10 @@ typedef struct
@@ -497,23 +497,23 @@ index 7738772..e106af9 100644
  	int start_desk;
  	int start_page_x;
 diff --git a/fvwm/geometry.c b/fvwm/geometry.c
-index fc0eafe..fcdd2cc 100644
+index 8edb052..9e701fe 100644
 --- a/fvwm/geometry.c
 +++ b/fvwm/geometry.c
-@@ -480,16 +480,18 @@ static void __get_window_borders(
+@@ -490,16 +490,17 @@ static void __get_window_borders(
  	const FvwmWindow *fw, size_borders *borders, Bool is_shaded)
  {
  	int title_thickness;
 +	int bw;
- 	
+ 
 -	borders->top_left.width = fw->boundary_width;
 -	borders->bottom_right.width = fw->boundary_width;
 -	borders->top_left.height = fw->boundary_width;
+-	borders->bottom_right.height = fw->boundary_width;
 +	bw = HAS_FLUXBOX_HANDLES(fw) ? 1 : fw->boundary_width;
 +	borders->top_left.width = bw;
 +	borders->bottom_right.width = bw;
 +	borders->top_left.height = bw;
- 	borders->bottom_right.height = fw->boundary_width;
  
  	title_thickness = fw->title_thickness;
  	if (HAS_TITLE(fw) && HAS_BORDER_UNDER_TITLE(fw) && !is_shaded)
@@ -521,9 +521,9 @@ index fc0eafe..fcdd2cc 100644
 -		title_thickness += fw->boundary_width;
 +		title_thickness += bw;
  	}
- 	
+ 
  	switch (GET_TITLE_DIR(fw))
-@@ -519,9 +521,13 @@ static void __get_window_borders(
+@@ -529,9 +530,13 @@ static void __get_window_borders(
  void get_window_borders_no_title(
  	const FvwmWindow *fw, size_borders *borders)
  {
@@ -541,7 +541,7 @@ index fc0eafe..fcdd2cc 100644
  	borders->total_size.width =
  		borders->top_left.width + borders->bottom_right.width;
 diff --git a/fvwm/menus.c b/fvwm/menus.c
-index 189b8f2..a0616df 100644
+index 96fcfad..a80023c 100644
 --- a/fvwm/menus.c
 +++ b/fvwm/menus.c
 @@ -67,6 +67,7 @@
@@ -552,7 +552,7 @@ index 189b8f2..a0616df 100644
  #include "libs/FGettext.h"
  
  /* ---------------------------- local definitions -------------------------- */
-@@ -3194,6 +3195,13 @@ static int do_menus_overlap(
+@@ -3192,6 +3193,13 @@ static int do_menus_overlap(
  	return x_overlap;
  }
  
@@ -566,7 +566,7 @@ index 189b8f2..a0616df 100644
  /*
   *
   *  Procedure:
-@@ -3767,6 +3775,8 @@ static int pop_menu_up(
+@@ -3765,6 +3773,8 @@ static int pop_menu_up(
  	 * Pop up the menu
  	 */
  
@@ -576,18 +576,18 @@ index 189b8f2..a0616df 100644
  	MR_X(mr) = x;
  	MR_Y(mr) = y;
 diff --git a/fvwm/menustyle.c b/fvwm/menustyle.c
-index 51b06c1..2a80c18 100644
+index 8ec99f7..b4989e7 100644
 --- a/fvwm/menustyle.c
 +++ b/fvwm/menustyle.c
-@@ -434,6 +434,7 @@ static int menustyle_get_styleopt_index(char *option)
- 		"VerticalMargins",
- 		"UniqueHotkeyActivatesImmediate",
- 		"FlatSeparators",
+@@ -432,6 +432,7 @@ static int menustyle_get_styleopt_index(char *option)
+ 		"TitleColorset", "HilightTitleBack",
+ 		"TitleFont",
+ 		"VerticalMargins", "FlatSeparators",
 +		"RoundedCorners", "SlightlyRoundedCorners",
+ 		"UniqueHotkeyActivatesImmediate",
  		NULL
  	};
- 
-@@ -1611,6 +1612,12 @@ MenuStyle *menustyle_parse_style(F_CMD_ARGS)
+@@ -1610,6 +1611,12 @@ MenuStyle *menustyle_parse_style(F_CMD_ARGS)
  		case 64: /* FlatSeparators */
  			ST_DO_FLAT_SEPARATOR(tmpms) = on;
  			break;
@@ -625,7 +625,7 @@ index 34dc524..8284a33 100644
  	unsigned char ReliefThickness;
  	unsigned char TitleUnderlines;
 diff --git a/fvwm/style.c b/fvwm/style.c
-index 656c297..affffff 100644
+index fe76440..aff2356 100644
 --- a/fvwm/style.c
 +++ b/fvwm/style.c
 @@ -565,6 +565,10 @@ static void merge_styles(
@@ -639,7 +639,7 @@ index 656c297..affffff 100644
  	if (add_style->flags.has_icon_size_limits)
  	{
  		SSET_MIN_ICON_WIDTH(
-@@ -2602,6 +2606,20 @@ static Bool style_parse_one_style_option(
+@@ -2600,6 +2604,20 @@ static Bool style_parse_one_style_option(
  			ps->change_mask.has_color_back = 1;
  			break;
  		}
@@ -656,11 +656,11 @@ index 656c297..affffff 100644
 +			}
 +			ps->flag_mask.has_corner_width = 1;
 +			ps->change_mask.has_corner_width = 1;
-+		}		
++		}
  		else if (StrEquals(token, "CirculateSkipIcon"))
  		{
  			S_SET_DO_CIRCULATE_SKIP_ICON(SCF(*ps), on);
-@@ -2914,6 +2932,15 @@ static Bool style_parse_one_style_option(
+@@ -2912,6 +2930,15 @@ static Bool style_parse_one_style_option(
  			S_SET_HAS_MWM_BORDER(SCM(*ps), 1);
  			S_SET_HAS_MWM_BORDER(SCC(*ps), 1);
  		}
@@ -676,7 +676,7 @@ index 656c297..affffff 100644
  		else if (StrEquals(token, "FocusFollowsMouse"))
  		{
  			style_set_old_focus_policy(ps, 1);
-@@ -4121,6 +4148,50 @@ static Bool style_parse_one_style_option(
+@@ -4119,6 +4146,50 @@ static Bool style_parse_one_style_option(
  			S_SET_IS_RIGHT_TITLE_ROTATED_CW(SCM(*ps), 1);
  			S_SET_IS_RIGHT_TITLE_ROTATED_CW(SCC(*ps), 1);
  		}
@@ -709,25 +709,25 @@ index 656c297..affffff 100644
 +		}
 +		else if (StrEquals(token, "RoundedCornersBottom"))
 +		{
-+            /* FluxboxHandles found */
-+            if (S_HAS_FLUXBOX_HANDLES(SCC(*ps))) {
-+                S_SET_HAS_ROUNDED_CORNERS_BOTTOM(SCF(*ps), !on);
-+                S_SET_HAS_ROUNDED_CORNERS_BOTTOM(SCM(*ps), 1);
-+                S_SET_HAS_ROUNDED_CORNERS_BOTTOM(SCC(*ps), 1);
-+            }
-+            else {
++			/* FluxboxHandles found */
++			if (S_HAS_FLUXBOX_HANDLES(SCC(*ps))) {
++				S_SET_HAS_ROUNDED_CORNERS_BOTTOM(SCF(*ps), !on);
++				S_SET_HAS_ROUNDED_CORNERS_BOTTOM(SCM(*ps), 1);
++				S_SET_HAS_ROUNDED_CORNERS_BOTTOM(SCC(*ps), 1);
++			}
++			else {
 +				S_SET_HAS_FLUXBOX_HANDLES(SCF(*ps), !on);
 +				S_SET_HAS_FLUXBOX_HANDLES(SCM(*ps), 1);
 +				S_SET_HAS_FLUXBOX_HANDLES(SCC(*ps), 1);
-+                S_SET_HAS_ROUNDED_CORNERS_BOTTOM(SCF(*ps), on);
-+                S_SET_HAS_ROUNDED_CORNERS_BOTTOM(SCM(*ps), 1);
-+                S_SET_HAS_ROUNDED_CORNERS_BOTTOM(SCC(*ps), 1);
-+            }
-+		}		
++				S_SET_HAS_ROUNDED_CORNERS_BOTTOM(SCF(*ps), on);
++				S_SET_HAS_ROUNDED_CORNERS_BOTTOM(SCM(*ps), 1);
++				S_SET_HAS_ROUNDED_CORNERS_BOTTOM(SCC(*ps), 1);
++			}
++		}
  		else
  		{
  			found = False;
-@@ -4255,6 +4326,12 @@ static Bool style_parse_one_style_option(
+@@ -4253,6 +4324,12 @@ static Bool style_parse_one_style_option(
  			S_SET_HAS_NO_STICKY_STIPPLED_ICON_TITLE(SCM(*ps), 1);
  			S_SET_HAS_NO_STICKY_STIPPLED_ICON_TITLE(SCC(*ps), 1);
  		}
@@ -740,11 +740,10 @@ index 656c297..affffff 100644
  		else if (StrEquals(token, "Slippery"))
  		{
  			S_SET_IS_STICKY_ACROSS_PAGES(SCF(*ps), !on);
-@@ -5268,6 +5345,20 @@ void check_window_style_change(
- 	{
+@@ -5267,6 +5344,20 @@ void check_window_style_change(
  		flags->do_update_rotated_title = 1;
  	}
-+
+ 
 +	/* has_fluxbox_handles */
 +	if (S_HAS_FLUXBOX_HANDLES(SCC(*ret_style)))
 +	{
@@ -758,10 +757,11 @@ index 656c297..affffff 100644
 +	{
 +		flags->do_redecorate = True;
 +	}
- 	
++
  	if (S_HAS_BORDER_UNDER_TITLE(SCC(*ret_style)))
  	{
-@@ -5532,6 +5623,12 @@ void check_window_style_change(
+ 		flags->do_redecorate = True;
+@@ -5530,6 +5621,12 @@ void check_window_style_change(
  		flags->do_update_modules_flags = 1;
  	}
  
@@ -775,7 +775,7 @@ index 656c297..affffff 100644
  	    ret_style->change_mask.use_backing_store ||
  	    ret_style->change_mask.use_parent_relative)
 diff --git a/fvwm/style.h b/fvwm/style.h
-index f6019fe..9b89e6e 100644
+index 9fec6c6..749972c 100644
 --- a/fvwm/style.h
 +++ b/fvwm/style.h
 @@ -24,6 +24,8 @@
@@ -888,5 +888,5 @@ index 3c58a91..2dad3a8 100644
  	BroadcastConfig(M_CONFIGURE_WINDOW, fw);
  	BroadcastPacket(
 -- 
-1.7.10.4
+2.0.5
 
