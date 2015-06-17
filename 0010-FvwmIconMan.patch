@@ -1,7 +1,7 @@
-From 250f886f1e4b10aaab49cc12dcf3cc3a3aeffe8d Mon Sep 17 00:00:00 2001
+From 3180df5c75ae0737442a31b9d045fa46eb4af6d2 Mon Sep 17 00:00:00 2001
 From: Anupam Srivastava <ansrivastava@corp.ebay.com>
 Date: Sat, 2 May 2015 14:41:55 +0530
-Subject: [PATCH 12/15] FvwmIconMan
+Subject: [PATCH 10/13] FvwmIconMan
 
 ---
  modules/FvwmIconMan/FvwmIconMan.h |  2 ++
@@ -124,5 +124,5 @@ index f0276cf..f18b475 100644
  			else if (button_state == SELECT_CONTEXT ||
  				 button_state == FOCUS_SELECT_CONTEXT ||
 -- 
-2.0.5
+2.3.6
 

@@ -1,7 +1,7 @@
-From 74c8c9eb30292fb705a14cc77d9f205111ca5a93 Mon Sep 17 00:00:00 2001
+From 4eba2a2b25c15b1f4a14675ab9ec96bf01de5034 Mon Sep 17 00:00:00 2001
 From: Anupam Srivastava <ansrivastava@corp.ebay.com>
 Date: Sat, 2 May 2015 13:56:53 +0530
-Subject: [PATCH 09/15] Button Width
+Subject: [PATCH 08/13] Button Width
 
 ---
  fvwm/builtins.c | 15 +++++++++++++++
@@ -34,5 +34,5 @@ index ce22c42..d26b122 100644
  		{
  			int height = 0;
 -- 
-2.0.5
+2.3.6
 

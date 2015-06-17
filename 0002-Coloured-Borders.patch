@@ -1,7 +1,7 @@
-From 49371f84c962dc3718809dc718d77504b6026e74 Mon Sep 17 00:00:00 2001
+From 069f6319cc482868485113f64176f656cf82c3b1 Mon Sep 17 00:00:00 2001
 From: Anupam Srivastava <ansrivastava@corp.ebay.com>
 Date: Sat, 2 May 2015 13:21:47 +0530
-Subject: [PATCH 02/15] Coloured Borders
+Subject: [PATCH 02/13] Coloured Borders
 
 ---
  fvwm/borders.c      | 436 ++++++++++++++++++++++++++++++++--
@@ -1938,5 +1938,5 @@ index 9aa762e..631972a 100644
  	((fw)->flags.common.s.do_shrink_windowshade)
  #define SET_DO_SHRINK_WINDOWSHADE(fw,x) \
 -- 
-2.0.5
+2.3.6
 

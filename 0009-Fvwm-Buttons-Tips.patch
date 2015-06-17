@@ -1,7 +1,7 @@
-From 12dd57f3c98207d2d675e5637444b1e66f49b864 Mon Sep 17 00:00:00 2001
+From a272f6479ca32bf27e642367dc8e7f5ce41637a7 Mon Sep 17 00:00:00 2001
 From: Anupam Srivastava <ansrivastava@corp.ebay.com>
 Date: Sat, 2 May 2015 14:41:23 +0530
-Subject: [PATCH 11/15] Fvwm Buttons Tips
+Subject: [PATCH 09/13] Fvwm Buttons Tips
 
 ---
  modules/FvwmButtons/FvwmButtons.c |  40 ++++++++++++-
@@ -307,5 +307,5 @@ index ddeedb1..b522d4c 100644
  		s = trimleft(s);
  		ParseButton(ubb, s);
 -- 
-2.0.5
+2.3.6
 

@@ -1,7 +1,7 @@
-From e417d22ceef608ca6fee515ded308ccb7542f82e Mon Sep 17 00:00:00 2001
+From 8db0ef1c0f25635f9e894a6ae6b9699a83f6e809 Mon Sep 17 00:00:00 2001
 From: Anupam Srivastava <ansrivastava@corp.ebay.com>
 Date: Sat, 2 May 2015 10:46:50 +0530
-Subject: [PATCH 01/15] Translucent Menus
+Subject: [PATCH 01/13] Translucent Menus
 
 ---
  fvwm/colorset.c        |  50 ++++++++++++
@@ -521,5 +521,5 @@ index ec75601..5e0001d 100644
  Pixmap PGraphicsCreateDitherPixmap(
  	Display *dpy, Window win, Drawable src, Pixmap mask, int depth, GC gc,
 -- 
-2.0.5
+2.3.6
 

@@ -1,7 +1,7 @@
-From 010e0d6729c42f75c87d827e4e5697370014b97c Mon Sep 17 00:00:00 2001
+From b4675094bc7f373ff25180405807ecdad3ac4f75 Mon Sep 17 00:00:00 2001
 From: Anupam Srivastava <ansrivastava@corp.ebay.com>
 Date: Sat, 2 May 2015 11:08:25 +0530
-Subject: [PATCH 03/15] Conditionals
+Subject: [PATCH 03/13] Conditionals
 
 ---
  fvwm/conditional.c | 30 ++++++++++++++++++++++++++++++
@@ -49,5 +49,5 @@ index b5be475..f2a6137 100644
  		{
  			SET_IS_UNICONIFIABLE(mask, !on);
 -- 
-2.0.5
+2.3.6
 

@@ -1,7 +1,7 @@
-From f400242616014cac5755923376cb4b70f97f956e Mon Sep 17 00:00:00 2001
+From c88e03c711f0b7b33f5bf09a0301287116a7dbbb Mon Sep 17 00:00:00 2001
 From: Anupam Srivastava <ansrivastava@corp.ebay.com>
 Date: Sat, 2 May 2015 11:09:18 +0530
-Subject: [PATCH 04/15] Flat Separators
+Subject: [PATCH 04/13] Flat Separators
 
 ---
  doc/commands/MenuStyle.xml |  7 ++++++-
@@ -186,5 +186,5 @@ index fa97555..34dc524 100644
  	unsigned char ReliefThickness;
  	unsigned char TitleUnderlines;
 -- 
-2.0.5
+2.3.6
 

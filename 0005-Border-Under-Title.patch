@@ -1,7 +1,7 @@
-From 00af59b5acec0210e4ce854e212337a22c36890d Mon Sep 17 00:00:00 2001
+From c9de4c8323178bb26e1734772a01c41af39e1c73 Mon Sep 17 00:00:00 2001
 From: Anupam Srivastava <ansrivastava@corp.ebay.com>
 Date: Sat, 2 May 2015 11:15:56 +0530
-Subject: [PATCH 05/15] Border Under Title
+Subject: [PATCH 05/13] Border Under Title
 
 ---
  fvwm/borders.c      | 28 +++++++++++++++++++++++++++-
@@ -231,5 +231,5 @@ index 631972a..9d04901 100644
  /* access to the special flags of a window */
  #define DO_REUSE_DESTROYED(fw) \
 -- 
-2.0.5
+2.3.6
 

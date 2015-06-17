@@ -1,7 +1,7 @@
-From 62fb6ca1a89445a4ddcec37a610d0a6f4723d31a Mon Sep 17 00:00:00 2001
+From 1005b492c40500087103f2c6ee672cae61405fc9 Mon Sep 17 00:00:00 2001
 From: Anupam Srivastava <ansrivastava@corp.ebay.com>
 Date: Sat, 2 May 2015 14:42:43 +0530
-Subject: [PATCH 13/15] Hover
+Subject: [PATCH 11/13] Hover
 
 ---
  fvwm/borders.c    | 39 ++++++++++++++++++++++++++++++++-------
@@ -14,7 +14,7 @@ Subject: [PATCH 13/15] Hover
  create mode 100644 fvwm/events.c.rej
 
 diff --git a/fvwm/borders.c b/fvwm/borders.c
-index cd86ffe..35a147c 100644
+index d35f21b..1c7a4fe 100644
 --- a/fvwm/borders.c
 +++ b/fvwm/borders.c
 @@ -67,6 +67,7 @@
@@ -66,7 +66,7 @@ index cd86ffe..35a147c 100644
  		if (old_state != td->tbstate.bstate[i])
  		{
  			draw_parts |= PART_BUTTONS;
-@@ -4398,6 +4405,7 @@ static void border_draw_buttons(
+@@ -4230,6 +4237,7 @@ static void border_draw_buttons(
  	fw->decor_state.buttons_inverted = td->tbstate.pressed_bmask;
  	fw->decor_state.buttons_lit = td->tbstate.lit_bmask;
  	fw->decor_state.buttons_toggled = td->tbstate.toggled_bmask;
@@ -74,7 +74,7 @@ index cd86ffe..35a147c 100644
  
  	return;
  }
-@@ -4666,13 +4674,18 @@ static void border_get_titlebar_descr_state(
+@@ -4498,13 +4506,18 @@ static void border_get_titlebar_descr_state(
  		{
  			tbstate->toggled_bmask |= mask;
  		}
@@ -95,7 +95,7 @@ index cd86ffe..35a147c 100644
  }
  
  static window_parts border_get_titlebar_descr(
-@@ -4937,6 +4950,7 @@ static void border_draw_titlebar(
+@@ -4766,6 +4779,7 @@ static void border_draw_titlebar(
  		fw->decor_state.buttons_lit = 0;
  		fw->decor_state.buttons_inverted = 0;
  		fw->decor_state.buttons_toggled = 0;
@@ -103,7 +103,7 @@ index cd86ffe..35a147c 100644
  		return;
  	}
  	memset(&td, 0, sizeof(td));
-@@ -4988,6 +5002,7 @@ static void border_draw_titlebar(
+@@ -4817,6 +4831,7 @@ static void border_draw_titlebar(
  		fw->decor_state.buttons_toggled =
  			(fw->decor_state.buttons_toggled &
  			 ~td.tbstate.max_bmask) | td.tbstate.toggled_bmask;
@@ -111,7 +111,7 @@ index cd86ffe..35a147c 100644
  	}
  
  	return;
-@@ -5078,11 +5093,12 @@ int border_is_using_border_style(
+@@ -4907,11 +4922,12 @@ int border_is_using_border_style(
  	ButtonState bs;
  	int is_pressed;
  	int is_toggled;
@@ -125,7 +125,7 @@ index cd86ffe..35a147c 100644
  	if (DFS_USE_BORDER_STYLE(TB_STATE(GetDecor(fw, titlebar))[bs].style))
  	{
  		return 1;
-@@ -5095,8 +5111,9 @@ int border_is_using_border_style(
+@@ -4924,8 +4940,9 @@ int border_is_using_border_style(
  		}
  		is_pressed = (FW_W_BUTTON(fw, i) == PressedW);
  		is_toggled = (is_button_toggled(fw, i) == True);
@@ -136,7 +136,7 @@ index cd86ffe..35a147c 100644
  		if (DFS_USE_BORDER_STYLE(
  			    TB_STATE(GetDecor(fw, buttons[i]))[bs].style))
  		{
-@@ -5557,6 +5574,7 @@ void CMD_ButtonState(F_CMD_ARGS)
+@@ -5377,6 +5394,7 @@ void CMD_ButtonState(F_CMD_ARGS)
  				DEFAULT_USE_INACTIVE_BUTTONS;
  			Scr.gs.use_inactive_down_buttons =
  				DEFAULT_USE_INACTIVE_DOWN_BUTTONS;
@@ -144,7 +144,7 @@ index cd86ffe..35a147c 100644
  			return;
  		}
  		first = False;
-@@ -5578,6 +5596,12 @@ void CMD_ButtonState(F_CMD_ARGS)
+@@ -5398,6 +5416,12 @@ void CMD_ButtonState(F_CMD_ARGS)
  				action, &action,
  				DEFAULT_USE_INACTIVE_DOWN_BUTTONS, True);
  		}
@@ -157,7 +157,7 @@ index cd86ffe..35a147c 100644
  		else
  		{
  			Scr.gs.use_active_down_buttons =
-@@ -5586,6 +5610,7 @@ void CMD_ButtonState(F_CMD_ARGS)
+@@ -5406,6 +5430,7 @@ void CMD_ButtonState(F_CMD_ARGS)
  				DEFAULT_USE_INACTIVE_BUTTONS;
  			Scr.gs.use_inactive_down_buttons =
  				DEFAULT_USE_INACTIVE_DOWN_BUTTONS;
@@ -166,7 +166,7 @@ index cd86ffe..35a147c 100644
  				 "Unknown button state %s", token);
  			return;
 diff --git a/fvwm/builtins.c b/fvwm/builtins.c
-index b5fdb4f..fa1bb5a 100644
+index d26b122..f129488 100644
 --- a/fvwm/builtins.c
 +++ b/fvwm/builtins.c
 @@ -103,12 +103,16 @@ static char *button_states[BS_MaxButtonStateName + 1] =
@@ -272,10 +272,10 @@ index 0000000..de50450
 +	lwp = &te->xcrossing;
 +	if (
 diff --git a/fvwm/fvwm.h b/fvwm/fvwm.h
-index 73a436c..3236df1 100644
+index 3651236..6873cf4 100644
 --- a/fvwm/fvwm.h
 +++ b/fvwm/fvwm.h
-@@ -827,6 +827,7 @@ typedef struct FvwmWindow
+@@ -825,6 +825,7 @@ typedef struct FvwmWindow
  		unsigned buttons_lit : NUMBER_OF_TITLE_BUTTONS;
  		unsigned buttons_inverted : NUMBER_OF_TITLE_BUTTONS;
  		unsigned buttons_toggled : NUMBER_OF_TITLE_BUTTONS;
@@ -284,10 +284,10 @@ index 73a436c..3236df1 100644
  		unsigned parts_lit : 12;
  		unsigned parts_inverted : 12;
 diff --git a/fvwm/screen.h b/fvwm/screen.h
-index e309268..5d66944 100644
+index ab14d1b..0baf75b 100644
 --- a/fvwm/screen.h
 +++ b/fvwm/screen.h
-@@ -202,12 +202,16 @@ typedef enum
+@@ -198,12 +198,16 @@ typedef enum
  	BS_All = -1,
  	BS_ActiveUp,
  	BS_ActiveDown,
@@ -304,7 +304,7 @@ index e309268..5d66944 100644
  	BS_MaxButtonState,
  	BS_MaxButtonStateMask = BS_MaxButtonState - 1,
  	BS_Active,
-@@ -220,10 +224,13 @@ typedef enum
+@@ -216,10 +220,13 @@ typedef enum
  	BS_AllInactive,
  	BS_AllUp,
  	BS_AllDown,
@@ -318,7 +318,7 @@ index e309268..5d66944 100644
  	BS_MaxButtonStateName
  } ButtonState;
  
-@@ -515,6 +522,7 @@ typedef struct ScreenInfo
+@@ -511,6 +518,7 @@ typedef struct ScreenInfo
  		unsigned use_active_down_buttons : 1;
  		unsigned use_inactive_buttons : 1;
  		unsigned use_inactive_down_buttons : 1;
@@ -327,5 +327,5 @@ index e309268..5d66944 100644
  	struct
  	{
 -- 
-2.0.5
+2.3.6
 

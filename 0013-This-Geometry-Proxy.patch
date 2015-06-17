@@ -1,7 +1,7 @@
-From c7be8bceb53ac9cf4bbcf26c3defb92508bdd304 Mon Sep 17 00:00:00 2001
+From a2ccb93d55d28f2e6b22cadee4b074e35c5e13d3 Mon Sep 17 00:00:00 2001
 From: Anupam Srivastava <ansrivastava@corp.ebay.com>
 Date: Sat, 2 May 2015 14:44:02 +0530
-Subject: [PATCH 15/15] This Geometry Proxy
+Subject: [PATCH 13/13] This Geometry Proxy
 
 ---
  libs/defaults.h               | 2 +-
@@ -35,5 +35,5 @@ index c5f1d4c..5c74fb7 100644
  #if 0
  	if (proxy->iconname != NULL)
 -- 
-2.0.5
+2.3.6
 

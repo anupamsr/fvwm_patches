@@ -1,7 +1,7 @@
-From 0d1e05ca5cbabea94709ac45637fcb0f7d635abe Mon Sep 17 00:00:00 2001
+From cbd2d54af5ec9de94c6bbdab09c45c2aefd4c1eb Mon Sep 17 00:00:00 2001
 From: Anupam Srivastava <ansrivastava@corp.ebay.com>
 Date: Sat, 2 May 2015 11:16:45 +0530
-Subject: [PATCH 06/15] Inactive Font
+Subject: [PATCH 06/13] Inactive Font
 
 ---
  fvwm/add_window.c   | 31 +++++++++++++++++++++++++++++++
@@ -359,5 +359,5 @@ index 9d04901..f37b4ba 100644
  	((fw)->flags.using_default_icon_font)
  #define SET_USING_DEFAULT_ICON_FONT(fw,x) \
 -- 
-2.0.5
+2.3.6
 
